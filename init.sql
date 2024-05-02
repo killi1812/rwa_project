@@ -1,0 +1,9 @@
+CREATE DATABASE IF NOT EXISTS rwa;
+
+USE rwa;
+
+CREATE TABLE IF NOT EXISTS tableData (
+    id INT AUTO_INCREMENT,
+    name VARCHAR(255),
+    PRIMARY KEY(id)
+    );
