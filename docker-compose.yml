@@ -1,15 +1,12 @@
-version: '3.8'
+version: "3.8"
 services:
   db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_ROOT_PASSWORD: SQL 
+    image: "mcr.microsoft.com/mssql/server"
     ports:
-      - "3306:3306"
+      - 1433:1433
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-  adminer:
-    image: adminer
-    ports:
-      - "8081:8081"
+      - ./init:/docker-entrypoint-initdb.d
+    environment:
+      SA_PASSWORD: "password123!"
+      ACCEPT_EULA: "Y"
+
