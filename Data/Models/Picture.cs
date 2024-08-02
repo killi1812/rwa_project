@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Data.Models;
+
+public partial class Picture
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public string Photographer { get; set; } = null!;
+
+    public int UserId { get; set; }
+
+    public byte[] Data { get; set; } = null!;
+
+    public virtual ICollection<Download> Downloads { get; set; } = new List<Download>();
+
+    public virtual User User { get; set; } = null!;
+}
