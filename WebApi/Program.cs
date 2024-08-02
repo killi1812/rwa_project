@@ -1,4 +1,5 @@
 using Data.Models;
+using Data.Services;
 using WebApi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<RwaContext>();
 builder.Services.AddAutoMapper(typeof(MapperProfile));
+
+builder.Services.AddScoped<IFotografijaServices, FotografijaServices>();
 
 var app = builder.Build();
 
