@@ -15,7 +15,7 @@ public class UserController : ControllerBase
         _userServices = userServices;
     }
 
-    [HttpGet("[action]")]
+    [HttpPut("[action]")]
     public async Task<IActionResult> Login([FromForm] LoginUserDto user)
     {
         try

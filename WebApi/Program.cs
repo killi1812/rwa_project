@@ -14,6 +14,7 @@ builder.Services.AddDbContext<RwaContext>();
 builder.Services.AddAutoMapper(typeof(MapperProfile));
 
 builder.Services.AddScoped<IPictureServices, PictureServices>();
+builder.Services.AddScoped<IUserServices, UserServices>();
 
 var app = builder.Build();
 
