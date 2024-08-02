@@ -11,12 +11,12 @@ namespace WebApi.Controllers;
 public class FotografijaController : ControllerBase
 {
     private readonly IMapper _mapper;
-    private readonly IFotografijaServices _fotografijaServices;
+    private readonly IPictureServices _pictureServices;
 
-    public FotografijaController(IMapper mapper, IFotografijaServices fotografijaServices)
+    public FotografijaController(IMapper mapper, IPictureServices pictureServices)
     {
         _mapper = mapper;
-        _fotografijaServices = fotografijaServices;
+        _pictureServices = pictureServices;
     }
 
     [HttpGet("[action]")]
@@ -24,7 +24,7 @@ public class FotografijaController : ControllerBase
     {
         try
         {
-            var pictures = await _fotografijaServices.GetPictures(page, n);
+            var pictures = await _pictureServices.GetPictures(page, n);
             return Ok(pictures);
         }
         catch (Exception e)
@@ -38,7 +38,7 @@ public class FotografijaController : ControllerBase
     {
         try
         {
-            var pictures = await _fotografijaServices.GetPicture(id);
+            var pictures = await _pictureServices.GetPicture(id);
             return Ok(pictures);
         }
         catch (Exception e)
@@ -53,7 +53,7 @@ public class FotografijaController : ControllerBase
         try
         {
             //TODO return created picture
-            await _fotografijaServices.CreatePicture(newPictureDto);
+            await _pictureServices.CreatePicture(newPictureDto);
             return Ok();
         }
         catch (Exception e)
@@ -67,7 +67,7 @@ public class FotografijaController : ControllerBase
     {
         try
         {
-            await _fotografijaServices.DeletePicture(id);
+            await _pictureServices.DeletePicture(id);
             return Ok();
         }
         catch (Exception e)
@@ -82,7 +82,7 @@ public class FotografijaController : ControllerBase
         try
         {
             //TODO return updated picture 
-            await _fotografijaServices.UpdatePicture(id, newPictureDto);
+            await _pictureServices.UpdatePicture(id, newPictureDto);
             return Ok();
         }
         catch (Exception e)

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Services;
 
-public interface IFotografijaServices
+public interface IPictureServices
 {
     Task<IList<Picture>> GetPictures(int page = 1, int n = 10);
     Task<Picture> GetPicture(int id);
@@ -13,11 +13,11 @@ public interface IFotografijaServices
     Task UpdatePicture(int id, NewPictureDto newPictureDto);
 }
 
-public class FotografijaServices : IFotografijaServices
+public class PictureServices : IPictureServices
 {
     private readonly RwaContext _context;
 
-    public FotografijaServices(RwaContext context)
+    public PictureServices(RwaContext context)
     {
         _context = context;
     }

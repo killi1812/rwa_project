@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<RwaContext>();
 builder.Services.AddAutoMapper(typeof(MapperProfile));
 
-builder.Services.AddScoped<IFotografijaServices, FotografijaServices>();
+builder.Services.AddScoped<IPictureServices, PictureServices>();
 
 var app = builder.Build();
 
