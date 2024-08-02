@@ -1,9 +1,12 @@
-CREATE DATABASE IF NOT EXISTS rwa;
+-- init.sql
+    CREATE DATABASE rwa;
+GO
 
 USE rwa;
+GO
 
-CREATE TABLE IF NOT EXISTS tableData (
-    id INT AUTO_INCREMENT,
-    name VARCHAR(255),
-    PRIMARY KEY(id)
-    );
+CREATE TABLE tableData (
+                           id INT IDENTITY(1,1) PRIMARY KEY,
+                           name VARCHAR(255)
+);
+GO
