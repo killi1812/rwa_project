@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Services;
 
-interface IUserServices
+public interface IUserServices
 {
     public User GetUser(int id);
     public Task<User> CreateUser(NewUserDto user);
