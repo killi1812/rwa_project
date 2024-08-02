@@ -1,3 +1,4 @@
+--TODO mby rename 
 CREATE DATABASE rwa;
 GO
 

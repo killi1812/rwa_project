@@ -1,3 +1,4 @@
+using Data.Models;
 using WebApi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddDbContext<RwaContext>();
 builder.Services.AddAutoMapper(typeof(MapperProfile));
 
 var app = builder.Build();
