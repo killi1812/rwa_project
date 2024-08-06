@@ -116,7 +116,6 @@ public class PictureServices : IPictureServices
             throw new NotFoundException("Picture not found");
 
         StringBuilder sb = new($"Picture {id} updated: ");
-        //TODO make null checks
         if (dto.Name != null)
         {
             picture.Name = dto.Name;
