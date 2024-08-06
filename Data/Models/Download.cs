@@ -7,7 +7,7 @@ public partial class Download
 {
     public int Id { get; set; }
 
-    public DateTime Date { get; set; }
+    public DateTime Date { get; set; } = DateTime.Now;
 
     public int PictureId { get; set; }
 
