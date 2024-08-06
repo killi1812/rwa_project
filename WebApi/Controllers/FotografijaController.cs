@@ -1,7 +1,9 @@
 using AutoMapper;
 using Data.Dto;
+using Data.Helpers;
 using Data.Models;
 using Data.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -19,6 +21,7 @@ public class FotografijaController : ControllerBase
         _pictureServices = pictureServices;
     }
 
+    [Authorize]
     [HttpGet("[action]")]
     public async Task<IActionResult> GetPaginated([FromQuery] int page = 1, [FromQuery] int n = 10)
     {
@@ -27,9 +30,13 @@ public class FotografijaController : ControllerBase
             var pictures = await _pictureServices.GetPictures(page, n);
             return Ok(pictures);
         }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return StatusCode(500, e.Message);
         }
     }
 
@@ -41,24 +48,36 @@ public class FotografijaController : ControllerBase
             var pictures = await _pictureServices.GetPicture(id);
             return Ok(pictures);
         }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return StatusCode(500, e.Message);
         }
     }
 
-    [HttpPost("[action]/{id}")]
+    [Authorize]
+    [HttpPost("[action]")]
     public async Task<IActionResult> Create([FromForm] NewPictureDto newPictureDto)
     {
         try
         {
+            var id = Request.GetId();
+            if (id == null) return BadRequest("id is null");
             //TODO return created picture
-            await _pictureServices.CreatePicture(newPictureDto);
+            await _pictureServices.CreatePicture(newPictureDto, id.Value);
             return Ok();
+        }
+        //TODO change all try caches to This
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return StatusCode(500, e.Message);
         }
     }
 
@@ -70,9 +89,13 @@ public class FotografijaController : ControllerBase
             await _pictureServices.DeletePicture(id);
             return Ok();
         }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return StatusCode(500, e.Message);
         }
     }
 
@@ -85,9 +108,13 @@ public class FotografijaController : ControllerBase
             await _pictureServices.UpdatePicture(id, newPictureDto);
             return Ok();
         }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return StatusCode(500, e.Message);
         }
     }
 }

@@ -1,4 +1,3 @@
-#TODO Fully move ot microsoft database
 version: "3.8"
 services:
   db:
@@ -7,6 +6,7 @@ services:
       - 1433:1433
     volumes:
       - ./init:/docker-entrypoint-initdb.d
+    # TODO script doesn't runn on container startup
     environment:
       SA_PASSWORD: "password123!"
       ACCEPT_EULA: "Y"

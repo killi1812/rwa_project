@@ -1,4 +1,5 @@
 using Data.Dto;
+using Data.Helpers;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,9 +9,9 @@ public interface IPictureServices
 {
     Task<IList<Picture>> GetPictures(int page = 1, int n = 10);
     Task<Picture> GetPicture(int id);
-    Task CreatePicture(NewPictureDto newPictureDto);
     Task DeletePicture(int id);
     Task UpdatePicture(int id, NewPictureDto newPictureDto);
+    Task CreatePicture(NewPictureDto newPictureDto, int id);
 }
 
 public class PictureServices : IPictureServices
@@ -38,49 +39,49 @@ public class PictureServices : IPictureServices
 
         if (picture == null)
             //TODO add notfound exception
-            throw new Exception("Picture not found");
+            throw new NotFoundException("Picture not found");
 
         return picture;
     }
 
-    public async Task CreatePicture(NewPictureDto newPictureDto)
+    public async Task CreatePicture(NewPictureDto newPictureDto, int id)
     {
         //TODO check if works
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == newPictureDto.UserId);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.Admin);
         if (user == null)
-            throw new Exception("User not found");
-
+            throw new NotFoundException("User not found");
 
         var picture = new Picture
         {
             Name = $"{newPictureDto.Name}.{newPictureDto.Data.ContentType.Split("/")[1]}",
             Photographer = newPictureDto.Photographer,
-            UserId = newPictureDto.UserId,
+            UserId = id,
         };
 
         byte[] data = new byte[newPictureDto.Data.Length];
         newPictureDto.Data.OpenReadStream().Read(data);
         picture.Data = data;
 
-        _context.Pictures.AddAsync(picture);
+        await _context.Pictures.AddAsync(picture);
         //TODO check if there need to be save changes before adding tags
         await _context.SaveChangesAsync();
-
-        var pictureTags = new List<PictureTag>();
-        var tags = await GetTags(newPictureDto.Tags);
-        foreach (var tag in tags)
-        {
-            pictureTags.Add(new PictureTag { PictureId = picture.Id, TagId = tag.Id });
-        }
-
-        await _context.PictureTags.AddRangeAsync(pictureTags);
-        await _context.SaveChangesAsync();
+        //TODO add ading tags
+        // var pictureTags = new List<PictureTag>();
+        // var tags = await GetTags(newPictureDto.Tags);
+        // foreach (var tag in tags)
+        // {
+        //     pictureTags.Add(new PictureTag { PictureId = picture.Id, TagId = tag.Id });
+        // }
+        //
+        // await _context.PictureTags.AddRangeAsync(pictureTags);
+        // await _context.SaveChangesAsync();
     }
 
     private async Task<List<Tag>> GetTags(List<string> oldTags)
     {
         var tags = _context.Tags.Where(t => oldTags.Contains(t.Name.ToLower())).ToList();
 
+        //TODO change all to select onaly those that are not in tags
         var newTags = oldTags
             .Where(t => tags.All(tag => tag.Name.ToLower() != t.ToLower()))
             .Select(t => new Tag { Name = t.ToLower() })
@@ -95,22 +96,22 @@ public class PictureServices : IPictureServices
     {
         var picture = _context.Pictures.FirstOrDefault(p => p.Id == id);
         if (picture == null)
-            throw new Exception("Picture not found");
+            throw new NotFoundException("Picture not found");
 
         _context.Pictures.Remove(picture);
-await        _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task UpdatePicture(int id, NewPictureDto newPictureDto)
     {
         var picture = _context.Pictures.FirstOrDefault(p => p.Id == id);
         if (picture == null)
-            throw new Exception("Picture not found");
-        
+            throw new NotFoundException("Picture not found");
+
         //TODO make null checks
         picture.Name = newPictureDto.Name;
         picture.Photographer = newPictureDto.Photographer;
-        picture.UserId = newPictureDto.UserId;
+        picture.UserId = id;
         var tags = await GetTags(newPictureDto.Tags);
 
         //TODO Remove old tags and add new tags 
