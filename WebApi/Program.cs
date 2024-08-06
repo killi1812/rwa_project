@@ -29,7 +29,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddScoped<IPictureServices, PictureServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
-
+builder.Services.AddScoped<ILoggerService, LoggerService>();
 
 builder.Services.AddSwaggerGen(o =>
 {

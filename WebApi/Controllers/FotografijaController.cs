@@ -100,12 +100,12 @@ public class FotografijaController : ControllerBase
     }
 
     [HttpPut("[action]/{id}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] NewPictureDto newPictureDto)
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdatePictureDto dto)
     {
         try
         {
             //TODO return updated picture 
-            await _pictureServices.UpdatePicture(id, newPictureDto);
+            await _pictureServices.UpdatePicture(id, dto);
             return Ok();
         }
         catch (NotFoundException e)

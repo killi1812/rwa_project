@@ -24,12 +24,15 @@ public class UserServices : IUserServices
     private readonly IMapper _mapper;
     private readonly RwaContext _context;
     private readonly IConfiguration _configuration;
+    private readonly ILoggerService _loggerService;
 
-    public UserServices(IMapper mapper, RwaContext context, IServiceProvider serviceProvider)
+    public UserServices(IMapper mapper, RwaContext context, IServiceProvider serviceProvider,
+        ILoggerService loggerService)
     {
         _context = context;
         _mapper = mapper;
         _configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        _loggerService = loggerService;
     }
 
     public User GetUser(int id)
@@ -45,6 +48,8 @@ public class UserServices : IUserServices
     {
         var user = _mapper.Map<User>(userDto);
         user.Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+
+        _loggerService.Log($"User {user.Name} created");
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
