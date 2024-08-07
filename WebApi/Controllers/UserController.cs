@@ -16,7 +16,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("[action]")]
-    public async Task<IActionResult> Login([FromForm] LoginUserDto user)
+    public async Task<IActionResult> Login([FromBody] LoginUserDto user)
     {
         try
         {
@@ -35,7 +35,12 @@ public class UserController : ControllerBase
         try
         {
             var newUser = await _userServices.CreateUser(user);
-            return Ok(newUser);
+            var jwt = await _userServices.Login(new LoginUserDto()
+            {
+                Password = user.Password,
+                Username = user.Username
+            });
+            return Ok(jwt);
         }
         catch (Exception e)
         {

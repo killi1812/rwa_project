@@ -29,7 +29,7 @@ public class PictureServices : IPictureServices
     public async Task<IList<Picture>> GetPictures(int page = 1, int n = 10)
     {
         var pictures = await _context.Pictures
-            .Skip(page * n)
+            .Skip((page - 1) * n)
             .Take(n)
             .ToListAsync();
         return pictures;
@@ -65,7 +65,7 @@ public class PictureServices : IPictureServices
         newPictureDto.Data.OpenReadStream().Read(data);
         picture.Data = data;
 
-        _loggerService.Log($"User {user.Name} created picture {picture.Name}");
+        _loggerService.Log($"User {user.Username} created picture {picture.Name}");
 
         await _context.Pictures.AddAsync(picture);
         //TODO check if there need to be save changes before adding tags

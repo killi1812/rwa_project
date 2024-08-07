@@ -28,15 +28,14 @@ public partial class RwaContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https: //go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer(
-            "Server=localhost,1433;Database=rwa;User=sa;Password=password123!;Encrypt=False;TrustServerCertificate=False");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=localhost,1433;Database=rwa;User=sa;Password=password123!;Encrypt=False;TrustServerCertificate=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Download>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__download__3213E83F2A4EBE42");
+            entity.HasKey(e => e.Id).HasName("PK__download__3213E83F0902A656");
 
             entity.ToTable("downloads");
 
@@ -60,7 +59,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<Log>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__logs__3213E83F3A48A782");
+            entity.HasKey(e => e.Id).HasName("PK__logs__3213E83F3263F154");
 
             entity.ToTable("logs");
 
@@ -76,7 +75,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<Picture>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__pictures__3213E83F50C24011");
+            entity.HasKey(e => e.Id).HasName("PK__pictures__3213E83FBB4EB0AB");
 
             entity.ToTable("pictures");
 
@@ -120,7 +119,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<Tag>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tags__3213E83FC58894C7");
+            entity.HasKey(e => e.Id).HasName("PK__tags__3213E83F9BA3579A");
 
             entity.ToTable("tags");
 
@@ -133,20 +132,20 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__users__3213E83F8E2E2DF9");
+            entity.HasKey(e => e.Id).HasName("PK__users__3213E83F8AAE023B");
 
             entity.ToTable("users");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Admin).HasColumnName("admin");
-            entity.Property(e => e.Name)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("name");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("password");
+            entity.Property(e => e.Username)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("username");
         });
 
         OnModelCreatingPartial(modelBuilder);

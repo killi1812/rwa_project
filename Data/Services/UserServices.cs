@@ -46,10 +46,11 @@ public class UserServices : IUserServices
 
     public async Task<User> CreateUser(NewUserDto userDto)
     {
+        //TODO check if user exists
         var user = _mapper.Map<User>(userDto);
         user.Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
-        _loggerService.Log($"User {user.Name} created");
+        _loggerService.Log($"User {user.Username} created");
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
@@ -58,7 +59,7 @@ public class UserServices : IUserServices
 
     public async Task<string> Login(LoginUserDto userDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Name == userDto.Username);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
         if (user == null)
             throw new NotFoundException("User not found");
 

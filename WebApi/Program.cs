@@ -21,8 +21,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateIssuer = false,
             ValidateAudience = false,
-            // ValidateLifetime = true,
-            // ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
             IssuerSigningKey = new SymmetricSecurityKey(key)
         };
     });
