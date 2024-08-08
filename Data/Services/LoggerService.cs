@@ -54,6 +54,7 @@ public class LoggerService : ILoggerService
     public async Task<IList<Log>> GetLogs(int page, int n = 10)
     {
         var logs = await _context.Logs
+            .OrderByDescending(l => l.Id)
             .Skip((page - 1) * n)
             .Take(n)
             .ToListAsync();

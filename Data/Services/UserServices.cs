@@ -61,14 +61,19 @@ public class UserServices : IUserServices
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
         if (user == null)
+        {
+            _loggerService.Log($"Wrong username: {userDto.Username}");
             throw new NotFoundException("User not found");
+        }
 
         var result = BCrypt.Net.BCrypt.Verify(userDto.Password, user.Password);
         if (!result)
+        {
+            _loggerService.Log($"Wrong password for user: {userDto.Username}");
             throw new Exception("Invalid password");
+        }
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        //TODO get key from appsettings.json
         byte[] key = Encoding.ASCII.GetBytes(_configuration["key"]);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -81,6 +86,7 @@ public class UserServices : IUserServices
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
+        _loggerService.Log($"User {user.Username} logged in");
         return tokenHandler.WriteToken(token);
     }
 }

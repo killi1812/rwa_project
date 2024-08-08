@@ -14,17 +14,20 @@ public class FotografijaController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IPictureServices _pictureServices;
+    private readonly ILoggerService _loggerService;
 
-    public FotografijaController(IMapper mapper, IPictureServices pictureServices)
+    public FotografijaController(IMapper mapper, IPictureServices pictureServices, ILoggerService loggerService)
     {
         _mapper = mapper;
         _pictureServices = pictureServices;
+        _loggerService = loggerService;
     }
 
     [Authorize]
     [HttpGet("[action]")]
     public async Task<IActionResult> GetPaginated([FromQuery] int page = 1, [FromQuery] int n = 10)
     {
+        _loggerService.Log($"User {Request.GetId()} wanted to get pictures from page: {page}, count: {n}");
         try
         {
             var pictures = await _pictureServices.GetPictures(page, n);
@@ -43,6 +46,7 @@ public class FotografijaController : ControllerBase
     [HttpGet("[action]/{id}")]
     public async Task<IActionResult> Get([FromRoute] int id)
     {
+        _loggerService.Log($"User ${Request.GetId()} wanted to get picture with id: {id}");
         try
         {
             var pictures = await _pictureServices.GetPicture(id);
@@ -50,10 +54,12 @@ public class FotografijaController : ControllerBase
         }
         catch (NotFoundException e)
         {
+            _loggerService.Log($"faile to get {e.Message}");
             return NotFound(e.Message);
         }
         catch (Exception e)
         {
+            _loggerService.Log($"faile to get {e.Message}");
             return StatusCode(500, e.Message);
         }
     }
@@ -62,6 +68,7 @@ public class FotografijaController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> Create([FromForm] NewPictureDto newPictureDto)
     {
+        _loggerService.Log($"User {Request.GetId()} wanted to create a new picture with name: {newPictureDto.Name}");
         try
         {
             var id = Request.GetId();
@@ -73,10 +80,12 @@ public class FotografijaController : ControllerBase
         //TODO change all try caches to This
         catch (NotFoundException e)
         {
+            _loggerService.Log($"faile to create {e.Message}");
             return NotFound(e.Message);
         }
         catch (Exception e)
         {
+            _loggerService.Log($"faile to create {e.Message}");
             return StatusCode(500, e.Message);
         }
     }
@@ -84,6 +93,7 @@ public class FotografijaController : ControllerBase
     [HttpDelete("[action]/{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
+        _loggerService.Log($"User {Request.GetId()} wanted to delete picture with id: {id}");
         try
         {
             await _pictureServices.DeletePicture(id);
@@ -91,10 +101,12 @@ public class FotografijaController : ControllerBase
         }
         catch (NotFoundException e)
         {
+            _loggerService.Log($"faile to delete {e.Message}");
             return NotFound(e.Message);
         }
         catch (Exception e)
         {
+            _loggerService.Log($"faile to delete {e.Message}");
             return StatusCode(500, e.Message);
         }
     }
@@ -102,6 +114,7 @@ public class FotografijaController : ControllerBase
     [HttpPut("[action]/{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdatePictureDto dto)
     {
+        _loggerService.Log($"User {Request.GetId()} wanted to update picture with id: {id}");
         try
         {
             //TODO return updated picture 
@@ -110,11 +123,20 @@ public class FotografijaController : ControllerBase
         }
         catch (NotFoundException e)
         {
+            _loggerService.Log($"faile to update {e.Message}");
             return NotFound(e.Message);
         }
         catch (Exception e)
         {
+            _loggerService.Log($"faile to update {e.Message}");
             return StatusCode(500, e.Message);
         }
+    }
+
+    [HttpGet("[action]")]
+    public IActionResult Search()
+    {
+        //TODO write a search that searches by name, photographer and tags 
+        throw new NotImplementedException();
     }
 }

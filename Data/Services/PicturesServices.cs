@@ -43,13 +43,12 @@ public class PictureServices : IPictureServices
         if (picture == null)
             //TODO add notfound exception
             throw new NotFoundException("Picture not found");
-
+    
         return picture;
     }
 
     public async Task CreatePicture(NewPictureDto newPictureDto, int id)
     {
-        //TODO check if works
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.Admin);
         if (user == null)
             throw new NotFoundException("User not found");
