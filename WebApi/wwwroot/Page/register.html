@@ -36,7 +36,7 @@
                     password: document.getElementById('password').value,
                     admin: document.getElementById('admin').value,
                 };
-                const response = await fetch('api/User/Register', {
+                const response = await fetch('../api/User/Register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

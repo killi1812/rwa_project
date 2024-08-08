@@ -7,3 +7,25 @@
     border-radius: 10px;
     background-color: #f9f9f9;
 }
+
+.middle-box {
+    width: 50%;
+    margin: 10px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.sm {
+    width: 5rem;
+    margin:  2rem  2rem  2rem 0;
+}
+
+.md {
+    width: 10rem;
+}
+#page{
+    margin: auto;
+    font: bold 1.5rem Arial;
+}

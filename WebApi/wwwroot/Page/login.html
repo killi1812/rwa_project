@@ -31,18 +31,17 @@
                     username: document.getElementById('username').value,
                     password: document.getElementById('password').value
                 };
-                const response = await fetch('api/User/Login', {
+                const response = await fetch('../api/User/Login', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(data)
                 });
-                debugger;
                 const result = await response.text();
                 if (response.ok) {
                     localStorage.setItem('jwt', result);
-                    window.location.href = '/home';
+                    window.location.href = 'home.html';
                 } else {
                     alert(response.status);
                 }
