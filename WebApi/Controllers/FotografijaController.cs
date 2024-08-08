@@ -54,12 +54,12 @@ public class FotografijaController : ControllerBase
         }
         catch (NotFoundException e)
         {
-            _loggerService.Log($"faile to get {e.Message}");
+            _loggerService.Log($"Failed to get {e.Message}");
             return NotFound(e.Message);
         }
         catch (Exception e)
         {
-            _loggerService.Log($"faile to get {e.Message}");
+            _loggerService.Log($"Failed to get {e.Message}");
             return StatusCode(500, e.Message);
         }
     }
@@ -80,12 +80,12 @@ public class FotografijaController : ControllerBase
         //TODO change all try caches to This
         catch (NotFoundException e)
         {
-            _loggerService.Log($"faile to create {e.Message}");
+            _loggerService.Log($"Failed to create {e.Message}");
             return NotFound(e.Message);
         }
         catch (Exception e)
         {
-            _loggerService.Log($"faile to create {e.Message}");
+            _loggerService.Log($"Failed to create {e.Message}");
             return StatusCode(500, e.Message);
         }
     }
@@ -101,12 +101,12 @@ public class FotografijaController : ControllerBase
         }
         catch (NotFoundException e)
         {
-            _loggerService.Log($"faile to delete {e.Message}");
+            _loggerService.Log($"Failed to delete {e.Message}");
             return NotFound(e.Message);
         }
         catch (Exception e)
         {
-            _loggerService.Log($"faile to delete {e.Message}");
+            _loggerService.Log($"Failed to delete {e.Message}");
             return StatusCode(500, e.Message);
         }
     }
@@ -123,12 +123,12 @@ public class FotografijaController : ControllerBase
         }
         catch (NotFoundException e)
         {
-            _loggerService.Log($"faile to update {e.Message}");
+            _loggerService.Log($"Failed to update {e.Message}");
             return NotFound(e.Message);
         }
         catch (Exception e)
         {
-            _loggerService.Log($"faile to update {e.Message}");
+            _loggerService.Log($"Failed to update {e.Message}");
             return StatusCode(500, e.Message);
         }
     }
