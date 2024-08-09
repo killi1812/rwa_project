@@ -6,11 +6,11 @@ namespace Data.Services;
 
 public interface ITagService
 {
-    public Task<List<Tag>> CreateNewTags(IList<string> tags);
+    public List<Tag> CreateNewTags(IList<string> tags);
     public Task RemoveTags(int pictureID, IList<string> tags);
     public Task UpdateTags(int pictureID, IList<string> tags);
 
-    public Task AddTags(int pictureID, IList<string> tags);
+    public Task AddTagsToPicture(int pictureID, IList<string> tags);
 }
 
 public class TagService : ITagService
@@ -41,7 +41,7 @@ public class TagService : ITagService
         return tags.Concat(newTags).ToList();
     }
 
-    public async Task<List<Tag>> CreateNewTags(IList<string> tags)
+    public List<Tag> CreateNewTags(IList<string> tags)
     {
         if (tags.Count == 0) return new List<Tag>();
 
@@ -56,13 +56,13 @@ public class TagService : ITagService
 
         _loggerService.LogMany(logs.ToArray());
 
-        lock (lockObj)
+        lock (newTags)
         {
             _context.Tags.AddRange(newTags);
             _context.SaveChanges();
         }
 
-        return await _context.Tags.Where(t => tags.Contains(t.Name)).ToListAsync();
+        return _context.Tags.Where(t => newTags.Contains(t)).ToList();
     }
 
     public async Task RemoveTags(int pictureID, IList<string> tags)
@@ -84,27 +84,31 @@ public class TagService : ITagService
         throw new NotImplementedException();
     }
 
-    public async Task AddTags(int pictureID, IList<string> tags)
+    public Task AddTagsToPicture(int pictureID, IList<string> tags)
     {
-        if (tags.Count == 0) return;
-
-        var existingTags = await _context.Tags.Where(t => !tags.Contains(t.Name)).ToListAsync();
-        List<Tag> newTags = await CreateNewTags(tags.Where(t => !existingTags.Any(et => et.Name == t)).ToList());
-
-        var tagsToAdd = existingTags.Concat(newTags);
-        if (!tagsToAdd.Any()) return;
-        List<PictureTag> pictureTags = new();
-
-        foreach (var tag in tagsToAdd)
+        if (tags.Count == 0) return Task.CompletedTask;
+        lock (tags)
         {
-            pictureTags.Add(new PictureTag
+            var existingTags = _context.Tags.Where(t => tags.Contains(t.Name)).ToList();
+            List<Tag> newTags = CreateNewTags(tags.Where(t => !existingTags.Any(et => et.Name == t)).ToList());
+
+            var tagsToAdd = existingTags.Concat(newTags);
+            if (!tagsToAdd.Any()) return Task.CompletedTask;
+            List<PictureTag> pictureTags = new();
+
+            foreach (var tag in tagsToAdd)
             {
-                PictureId = pictureID,
-                TagId = tag.Id
-            });
+                pictureTags.Add(new PictureTag
+                {
+                    PictureId = pictureID,
+                    TagId = tag.Id
+                });
+            }
+
+            _context.PictureTags.AddRange(pictureTags);
+            _context.SaveChanges();
         }
 
-        await _context.PictureTags.AddRangeAsync(pictureTags);
-        await _context.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 }

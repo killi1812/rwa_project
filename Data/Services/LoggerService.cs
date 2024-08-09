@@ -13,7 +13,7 @@ public interface ILoggerService
 public class LoggerService : ILoggerService
 {
     private readonly RwaContext _context;
-    private object objLock = new();
+    private readonly object objLock = new();
 
     public LoggerService(RwaContext context)
     {
@@ -22,13 +22,13 @@ public class LoggerService : ILoggerService
 
     public Task Log(string message)
     {
-        lock (objLock)
+        var log = new Log
         {
-            var log = new Log
-            {
-                Message = message,
-            };
+            Message = message,
+        };
 
+        lock (log)
+        {
             _context.Logs.Add(log);
             _context.SaveChanges();
         }
@@ -36,7 +36,7 @@ public class LoggerService : ILoggerService
         return Task.CompletedTask;
     }
 
-    public async Task LogMany(string[] messages)
+    public Task LogMany(string[] messages)
     {
         var logs = new List<Log>(messages.Length);
         foreach (var m in messages)
@@ -47,8 +47,13 @@ public class LoggerService : ILoggerService
             });
         }
 
-        _context.Logs.AddRange(logs);
-        await _context.SaveChangesAsync();
+        lock (logs)
+        {
+            _context.Logs.AddRange(logs);
+            _context.SaveChanges();
+        }
+
+        return Task.CompletedTask;
     }
 
     public async Task<IList<Log>> GetLogs(int page, int n = 10)

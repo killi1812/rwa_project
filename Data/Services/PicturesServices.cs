@@ -12,7 +12,8 @@ public interface IPictureServices
     Task<Picture> GetPicture(int id);
     Task DeletePicture(int id);
     Task UpdatePicture(int id, UpdatePictureDto dto);
-    Task CreatePicture(NewPictureDto newPictureDto, int id);
+    Task<Picture> CreatePicture(NewPictureDto newPictureDto, int id);
+    Task<List<Picture>> SearchPictures(string query);
 }
 
 public class PictureServices : IPictureServices
@@ -49,7 +50,7 @@ public class PictureServices : IPictureServices
         return picture;
     }
 
-    public async Task CreatePicture(NewPictureDto newPictureDto, int id)
+    public async Task<Picture> CreatePicture(NewPictureDto newPictureDto, int id)
     {
         //TODO Add guids
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.Admin);
@@ -63,18 +64,40 @@ public class PictureServices : IPictureServices
             UserId = id,
         };
 
-        byte[] data = new byte[newPictureDto.Data.Length];
-        newPictureDto.Data.OpenReadStream().Read(data);
-        picture.Data = data;
+        lock (picture)
+        {
+            byte[] data = new byte[newPictureDto.Data.Length];
+            newPictureDto.Data.OpenReadStream().Read(data);
+            picture.Data = data;
+
+
+            _context.Pictures.Add(picture);
+            _context.SaveChanges();
+        }
 
         _loggerService.Log($"User {user.Username} created picture {picture.Name}");
+        var pic = _context.Pictures.FirstOrDefault(p => p.Guid == picture.Guid);
+        if (pic == null)
+            throw new NotFoundException("Picture not found");
 
-        await _context.Pictures.AddAsync(picture);
-        //TODO check if there need to be save changes before adding tags
-        await _context.SaveChangesAsync();
+        await _tagService.AddTagsToPicture(pic.Id, newPictureDto.Tags);
+        return pic;
+    }
 
-        var picId = _context.Pictures.FirstOrDefaultAsync(p => p.Guid == picture.Guid).Id;
-        await _tagService.AddTags(picId, newPictureDto.Tags);
+    public async Task<List<Picture>> SearchPictures(string query)
+    {
+        //TODO test
+        var pics = await _context.PictureTags
+            .Where(pt =>
+                pt.Picture.Name.Contains(query) ||
+                pt.Picture.Photographer.Contains(query) ||
+                pt.Tag.Name.Contains(query)
+            )
+            .Include(pt => pt.Tag)
+            .Include(pt => pt.Picture)
+            .Select(pt => pt.Picture)
+            .ToListAsync();
+        return pics;
     }
 
 

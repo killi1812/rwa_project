@@ -133,9 +133,9 @@ public class FotografijaController : ControllerBase
     }
 
     [HttpGet("[action]")]
-    public IActionResult Search()
+    public async Task<IActionResult> Search([FromQuery] string query)
     {
-        //TODO write a search that searches by name, photographer and tags 
-        throw new NotImplementedException();
+        var pics = await _pictureServices.SearchPictures(query);
+        return Ok(pics);
     }
 }
