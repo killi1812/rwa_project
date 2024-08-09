@@ -10,4 +10,6 @@ public partial class Tag
     public Guid Guid { get; set; } = Guid.NewGuid();
 
     public string Name { get; set; } = null!;
+
+    public virtual ICollection<PictureTag> PictureTags { get; set; } = new List<PictureTag>();
 }

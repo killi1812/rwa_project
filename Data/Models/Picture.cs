@@ -19,5 +19,7 @@ public partial class Picture
 
     public virtual ICollection<Download> Downloads { get; set; } = new List<Download>();
 
+    public virtual ICollection<PictureTag> PictureTags { get; set; } = new List<PictureTag>();
+
     public virtual User User { get; set; } = null!;
 }

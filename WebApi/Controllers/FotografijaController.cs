@@ -54,12 +54,11 @@ public class FotografijaController : ControllerBase
         }
         catch (NotFoundException e)
         {
-            _loggerService.Log($"Failed to get {e.Message}");
+            _loggerService.Log($"Failed to get fotografija");
             return NotFound(e.Message);
         }
         catch (Exception e)
         {
-            _loggerService.Log($"Failed to get {e.Message}");
             return StatusCode(500, e.Message);
         }
     }

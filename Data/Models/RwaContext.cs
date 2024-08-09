@@ -35,7 +35,7 @@ public partial class RwaContext : DbContext
     {
         modelBuilder.Entity<Download>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__download__3213E83F45DDC82C");
+            entity.HasKey(e => e.Id).HasName("PK__download__3213E83FEF5F6FB5");
 
             entity.ToTable("downloads");
 
@@ -59,7 +59,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<Log>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__logs__3213E83FD7E63D37");
+            entity.HasKey(e => e.Id).HasName("PK__logs__3213E83F8FF063D5");
 
             entity.ToTable("logs");
 
@@ -68,14 +68,13 @@ public partial class RwaContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("date");
             entity.Property(e => e.Message)
-                .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("message");
         });
 
         modelBuilder.Entity<Picture>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__pictures__3213E83FFC61820E");
+            entity.HasKey(e => e.Id).HasName("PK__pictures__3213E83F86D1C257");
 
             entity.ToTable("pictures");
 
@@ -95,24 +94,25 @@ public partial class RwaContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Pictures)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__pictures__userId__3A81B327");
+                .HasConstraintName("FK__pictures__userId__398D8EEE");
         });
 
         modelBuilder.Entity<PictureTag>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("pictureTags");
+            entity.HasKey(e => e.Id).HasName("PK__pictureT__3213E83F54F862C7");
 
+            entity.ToTable("pictureTags");
+
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.PictureId).HasColumnName("pictureId");
             entity.Property(e => e.TagId).HasColumnName("tagId");
 
-            entity.HasOne(d => d.Picture).WithMany()
+            entity.HasOne(d => d.Picture).WithMany(p => p.PictureTags)
                 .HasForeignKey(d => d.PictureId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__pictureTa__pictu__3E52440B");
 
-            entity.HasOne(d => d.Tag).WithMany()
+            entity.HasOne(d => d.Tag).WithMany(p => p.PictureTags)
                 .HasForeignKey(d => d.TagId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__pictureTa__tagId__3F466844");
@@ -120,7 +120,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<Tag>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tags__3213E83FBB198A6E");
+            entity.HasKey(e => e.Id).HasName("PK__tags__3213E83F7130F240");
 
             entity.ToTable("tags");
 
@@ -134,15 +134,13 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__users__3213E83FF2341E67");
+            entity.HasKey(e => e.Id).HasName("PK__users__3213E83F5128570F");
 
             entity.ToTable("users");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Admin).HasColumnName("admin");
-            entity.Property(e => e.Guid)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("guid");
+            entity.Property(e => e.Guid).HasColumnName("guid");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .IsUnicode(false)

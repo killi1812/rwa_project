@@ -62,7 +62,7 @@ public class TagService : ITagService
             _context.SaveChanges();
         }
 
-        return await _context.Tags.Where(t => newTags.Any(tg => tg.Name == t.Name)).ToListAsync();
+        return await _context.Tags.Where(t => tags.Contains(t.Name)).ToListAsync();
     }
 
     public async Task RemoveTags(int pictureID, IList<string> tags)
@@ -88,7 +88,7 @@ public class TagService : ITagService
     {
         if (tags.Count == 0) return;
 
-        var existingTags = await _context.Tags.Where(t => !tags.Any(tg => tg == t.Name)).ToListAsync();
+        var existingTags = await _context.Tags.Where(t => !tags.Contains(t.Name)).ToListAsync();
         List<Tag> newTags = await CreateNewTags(tags.Where(t => !existingTags.Any(et => et.Name == t)).ToList());
 
         var tagsToAdd = existingTags.Concat(newTags);

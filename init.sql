@@ -35,8 +35,9 @@ create table tags
 -- m-n relationship between pictures and tags
 create table pictureTags
 (
-    pictureId int not null,
-    tagId     int not null,
+    id        int identity (1,1) primary key not null,
+    pictureId int                            not null,
+    tagId     int                            not null,
     foreign key (pictureId) references pictures (id),
     foreign key (tagId) references tags (id)
 );
@@ -57,5 +58,5 @@ create table logs
 (
     id      int identity (1,1) primary key not null,
     date    datetime                       not null,
-    message varchar(255)                   not null,
+    message varchar(max)                   not null,
 );
