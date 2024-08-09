@@ -25,6 +25,22 @@ public class TagService : ITagService
         _loggerService = loggerService;
     }
 
+    //TODO check if function needed
+    public async Task<List<Tag>> GetTags(List<string> oldTags)
+    {
+        var tags = _context.Tags.Where(t => oldTags.Contains(t.Name.ToLower())).ToList();
+
+        //TODO change all to select onaly those that are not in tags
+        var newTags = oldTags
+            .Where(t => tags.All(tag => tag.Name.ToLower() != t.ToLower()))
+            .Select(t => new Tag { Name = t.ToLower() })
+            .ToList();
+
+        await _context.Tags.AddRangeAsync(newTags);
+        await _context.SaveChangesAsync();
+        return tags.Concat(newTags).ToList();
+    }
+
     public async Task<List<Tag>> CreateNewTags(IList<string> tags)
     {
         if (tags.Count == 0) return new List<Tag>();
@@ -42,8 +58,8 @@ public class TagService : ITagService
 
         lock (lockObj)
         {
-            _context.Tags.AddRangeAsync(newTags);
-            _context.SaveChangesAsync();
+            _context.Tags.AddRange(newTags);
+            _context.SaveChanges();
         }
 
         return await _context.Tags.Where(t => newTags.Any(tg => tg.Name == t.Name)).ToListAsync();
@@ -52,13 +68,12 @@ public class TagService : ITagService
     public async Task RemoveTags(int pictureID, IList<string> tags)
     {
         if (tags.Count == 0) return;
-
-        var oldTags = new List<Tag>(tags.Count);
-        var logs = new List<string>(tags.Count);
-
-        var da = await _context.PictureTags.Where(pt => tags.Any(t => t == pt.Tag.Name)).ToListAsync();
-
-        throw new NotImplementedException();
+        lock (lockObj)
+        {
+            var pictureTags = _context.PictureTags.Where(pt => pt.PictureId == pictureID).ToList();
+            _context.PictureTags.RemoveRange(pictureTags);
+            _context.SaveChanges();
+        }
     }
 
     public async Task UpdateTags(int pictureID, IList<string> tags)

@@ -19,11 +19,13 @@ public class PictureServices : IPictureServices
 {
     private readonly RwaContext _context;
     private readonly ILoggerService _loggerService;
+    private readonly ITagService _tagService;
 
-    public PictureServices(RwaContext context, ILoggerService loggerService)
+    public PictureServices(RwaContext context, ILoggerService loggerService, ITagService tagService)
     {
         _context = context;
         _loggerService = loggerService;
+        _tagService = tagService;
     }
 
     public async Task<IList<Picture>> GetPictures(int page = 1, int n = 10)
@@ -43,12 +45,13 @@ public class PictureServices : IPictureServices
         if (picture == null)
             //TODO add notfound exception
             throw new NotFoundException("Picture not found");
-    
+
         return picture;
     }
 
     public async Task CreatePicture(NewPictureDto newPictureDto, int id)
     {
+        //TODO Add guids
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.Admin);
         if (user == null)
             throw new NotFoundException("User not found");
@@ -69,32 +72,11 @@ public class PictureServices : IPictureServices
         await _context.Pictures.AddAsync(picture);
         //TODO check if there need to be save changes before adding tags
         await _context.SaveChangesAsync();
-        //TODO add ading tags
-        // var pictureTags = new List<PictureTag>();
-        // var tags = await GetTags(newPictureDto.Tags);
-        // foreach (var tag in tags)
-        // {
-        //     pictureTags.Add(new PictureTag { PictureId = picture.Id, TagId = tag.Id });
-        // }
-        //
-        // await _context.PictureTags.AddRangeAsync(pictureTags);
-        // await _context.SaveChangesAsync();
+
+        var picId = _context.Pictures.FirstOrDefaultAsync(p => p.Guid == picture.Guid).Id;
+        await _tagService.AddTags(picId, newPictureDto.Tags);
     }
 
-    private async Task<List<Tag>> GetTags(List<string> oldTags)
-    {
-        var tags = _context.Tags.Where(t => oldTags.Contains(t.Name.ToLower())).ToList();
-
-        //TODO change all to select onaly those that are not in tags
-        var newTags = oldTags
-            .Where(t => tags.All(tag => tag.Name.ToLower() != t.ToLower()))
-            .Select(t => new Tag { Name = t.ToLower() })
-            .ToList();
-
-        await _context.Tags.AddRangeAsync(newTags);
-        await _context.SaveChangesAsync();
-        return tags.Concat(newTags).ToList();
-    }
 
     public async Task DeletePicture(int id)
     {

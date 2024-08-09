@@ -8,7 +8,8 @@ GO
 CREATE TABLE users
 (
     id       INT IDENTITY (1,1) PRIMARY KEY NOT NULL,
-    username     VARCHAR(255)                   NOT NULL,
+    guid     UNIQUEIDENTIFIER               NOT NULL,
+    username VARCHAR(255)                   NOT NULL,
     admin    bit                            NOT NULL,
     password VARCHAR(255)                   NOT NULL
 );
@@ -16,6 +17,7 @@ CREATE TABLE users
 create table pictures
 (
     id           int identity (1,1) primary key not null,
+    guid         UNIQUEIDENTIFIER               NOT NULL,
     name         varchar(255)                   not null,
     photographer varchar(255)                   not null,
     userId       int                            not null,
@@ -26,6 +28,7 @@ create table pictures
 create table tags
 (
     id   int identity (1,1) primary key not null,
+    guid UNIQUEIDENTIFIER               NOT NULL,
     name varchar(255)                   not null
 );
 
