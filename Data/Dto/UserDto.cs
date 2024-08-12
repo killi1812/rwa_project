@@ -2,7 +2,6 @@ namespace Data.Dto;
 
 public class UserDto
 {
-    public int Id { get; set; }
     public string Guid { get; set; } = null!;
     public string Username { get; set; } = null!;
 

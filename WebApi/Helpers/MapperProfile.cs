@@ -11,7 +11,8 @@ public class MapperProfile : Profile
         CreateMap<NewUserDto, User>()
             .ForMember(dest => dest.Password, opt => opt.Ignore());
 
-        CreateMap<User, UserDto>();
+        CreateMap<User, UserDto>()
+            .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()));
         CreateMap<UserDto, User>()
             .ForMember(dest => dest.Password, opt => opt.Ignore())
             .ForMember(dest => dest.Id, opt => opt.Ignore());

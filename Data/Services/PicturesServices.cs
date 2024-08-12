@@ -98,17 +98,17 @@ public class PictureServices : IPictureServices
     public async Task<List<Picture>> SearchPictures(string query)
     {
         //TODO test
-        var pics = await _context.PictureTags
-            .Where(pt =>
-                pt.Picture.Name.Contains(query) ||
-                pt.Picture.Photographer.Contains(query) ||
-                pt.Tag.Name.Contains(query)
+        var pic = await _context.Pictures
+            .Where(p =>
+                p.Name.Contains(query) ||
+                p.Photographer.Contains(query) ||
+                p.PictureTags.Any(pt => pt.Tag.Name.Contains(query))
             )
-            .Include(pt => pt.Tag)
-            .Include(pt => pt.Picture)
-            .Select(pt => pt.Picture)
+            .Include(p => p.PictureTags)
+            .ThenInclude(pt => pt.Tag)
+            .Include(p => p.User)
             .ToListAsync();
-        return pics;
+        return pic;
     }
 
     public async Task<byte[]> GetPictureData(Guid guid)
