@@ -138,4 +138,11 @@ public class FotografijaController : ControllerBase
         var pics = await _pictureServices.SearchPictures(query);
         return Ok(pics);
     }
+
+    [HttpGet("[action]/{guid}")]
+    public async Task<IActionResult> Picture([FromRoute] string guid)
+    {
+        var pic = await _pictureServices.GetPictureData(Guid.Parse(guid));
+        return File(pic, "image/jpeg");
+    }
 }
