@@ -17,7 +17,6 @@ public class TagService : ITagService
 {
     private readonly RwaContext _context;
     private readonly ILoggerService _loggerService;
-    private readonly object lockObj = new object();
 
     public TagService(RwaContext context, ILoggerService loggerService)
     {
@@ -68,7 +67,7 @@ public class TagService : ITagService
     public async Task RemoveTags(int pictureID, IList<string> tags)
     {
         if (tags.Count == 0) return;
-        lock (lockObj)
+        lock (tags)
         {
             var pictureTags = _context.PictureTags.Where(pt => pt.PictureId == pictureID).ToList();
             _context.PictureTags.RemoveRange(pictureTags);
@@ -80,7 +79,7 @@ public class TagService : ITagService
     {
         if (tags.Count == 0) return;
         var existingTags = await _context.Tags.Where(t => tags.Any(tg => tg == t.Name)).ToListAsync();
-
+        //TODO impmelement
         throw new NotImplementedException();
     }
 

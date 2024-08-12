@@ -14,7 +14,6 @@ namespace Data.Services;
 
 public interface IUserServices
 {
-    public User GetUser(int id);
     public Task<User> CreateUser(NewUserDto user);
     public Task<string> Login(LoginUserDto user);
 }
@@ -33,15 +32,6 @@ public class UserServices : IUserServices
         _mapper = mapper;
         _configuration = serviceProvider.GetRequiredService<IConfiguration>();
         _loggerService = loggerService;
-    }
-
-    public User GetUser(int id)
-    {
-        var user = _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-        if (user == null)
-            throw new NotFoundException("User not found");
-
-        return _mapper.Map<User>(user);
     }
 
     public async Task<User> CreateUser(NewUserDto userDto)
