@@ -49,7 +49,6 @@ public class FotografijaController : ControllerBase
     {
         try
         {
-            //TODO return a dto and serve picture seperatly
             var pictures = await _pictureServices.GetPicture(Guid.Parse(guid));
             return Ok(_mapper.Map<PictureDto>(pictures));
         }
@@ -71,12 +70,11 @@ public class FotografijaController : ControllerBase
         try
         {
             var guid = Request.GetGuid();
-            if (guid == null) return BadRequest("id is null");
+            if (guid == null) return BadRequest("guid is null");
             //TODO return created picture
             await _pictureServices.CreatePicture(newPictureDto, guid.Value);
             return Ok();
         }
-        //TODO change all try caches to This
         catch (NotFoundException e)
         {
             _loggerService.Log($"Failed to create {e.Message}");

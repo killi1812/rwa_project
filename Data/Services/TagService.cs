@@ -79,7 +79,6 @@ public class TagService : ITagService
     {
         if (tags.Count == 0) return;
         var existingTags = await _context.Tags.Where(t => tags.Any(tg => tg == t.Name)).ToListAsync();
-        //TODO impmelement
         throw new NotImplementedException();
     }
 

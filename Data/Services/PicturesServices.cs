@@ -52,7 +52,6 @@ public class PictureServices : IPictureServices
             .FirstOrDefaultAsync(p => p.Guid == guid);
 
         if (picture == null)
-            //TODO add notfound exception
             throw new NotFoundException("Picture not found");
 
         _loggerService.Log($"User ${picture.User.Username} gets picture with guid {guid}");
@@ -61,7 +60,6 @@ public class PictureServices : IPictureServices
 
     public async Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid)
     {
-        //TODO Add guids
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == guid && u.Admin);
         if (user == null)
             throw new NotFoundException("User not found");
@@ -97,7 +95,6 @@ public class PictureServices : IPictureServices
 
     public async Task<List<Picture>> SearchPictures(string query)
     {
-        //TODO test
         var pic = await _context.Pictures
             .Where(p =>
                 p.Name.Contains(query) ||
@@ -118,7 +115,6 @@ public class PictureServices : IPictureServices
             .FirstOrDefaultAsync();
         if (picture == null)
             throw new NotFoundException("Picture not found");
-        //TODO add doenload log
         _loggerService.Log($"Picture data requested {picture.Name}");
         return picture.PictureByte.Data;
     }

@@ -37,6 +37,14 @@ public class UserServices : IUserServices
     public async Task<User> CreateUser(NewUserDto userDto)
     {
         //TODO check if user exists
+
+        var userExist = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
+        if (userExist != null)
+        {
+            _loggerService.Log($"User {userDto.Username} already exists");
+            throw new Exception("User already exists");
+        }
+
         var user = _mapper.Map<User>(userDto);
         user.Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
