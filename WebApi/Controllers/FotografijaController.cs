@@ -27,11 +27,12 @@ public class FotografijaController : ControllerBase
     [HttpGet("[action]")]
     public async Task<IActionResult> GetPaginated([FromQuery] int page = 1, [FromQuery] int n = 10)
     {
-        _loggerService.Log($"User {Request.GetId()} wanted to get pictures from page: {page}, count: {n}");
         try
         {
             var pictures = await _pictureServices.GetPictures(page, n);
-            return Ok(pictures);
+            _loggerService.Log(
+                $"User {Request.GetGuid()} pictures from page: {page}, count: {pictures.Count}");
+            return Ok(_mapper.Map<List<PictureDto>>(pictures));
         }
         catch (NotFoundException e)
         {
@@ -43,14 +44,14 @@ public class FotografijaController : ControllerBase
         }
     }
 
-    [HttpGet("[action]/{id}")]
-    public async Task<IActionResult> Get([FromRoute] int id)
+    [HttpGet("[action]/{guid}")]
+    public async Task<IActionResult> Get([FromRoute] string guid)
     {
-        _loggerService.Log($"User ${Request.GetId()} wanted to get picture with id: {id}");
         try
         {
-            var pictures = await _pictureServices.GetPicture(id);
-            return Ok(pictures);
+            //TODO return a dto and serve picture seperatly
+            var pictures = await _pictureServices.GetPicture(Guid.Parse(guid));
+            return Ok(_mapper.Map<PictureDto>(pictures));
         }
         catch (NotFoundException e)
         {
@@ -67,13 +68,12 @@ public class FotografijaController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> Create([FromForm] NewPictureDto newPictureDto)
     {
-        _loggerService.Log($"User {Request.GetId()} wanted to create a new picture with name: {newPictureDto.Name}");
         try
         {
-            var id = Request.GetId();
-            if (id == null) return BadRequest("id is null");
+            var guid = Request.GetGuid();
+            if (guid == null) return BadRequest("id is null");
             //TODO return created picture
-            await _pictureServices.CreatePicture(newPictureDto, id.Value);
+            await _pictureServices.CreatePicture(newPictureDto, guid.Value);
             return Ok();
         }
         //TODO change all try caches to This
@@ -89,13 +89,13 @@ public class FotografijaController : ControllerBase
         }
     }
 
-    [HttpDelete("[action]/{id}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    [Authorize]
+    [HttpDelete("[action]/{guid}")]
+    public async Task<IActionResult> Delete([FromRoute] string guid)
     {
-        _loggerService.Log($"User {Request.GetId()} wanted to delete picture with id: {id}");
         try
         {
-            await _pictureServices.DeletePicture(id);
+            await _pictureServices.DeletePicture(Guid.Parse(guid));
             return Ok();
         }
         catch (NotFoundException e)
@@ -110,14 +110,14 @@ public class FotografijaController : ControllerBase
         }
     }
 
-    [HttpPut("[action]/{id}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdatePictureDto dto)
+    [Authorize]
+    [HttpPut("[action]/{guid}")]
+    public async Task<IActionResult> Update([FromRoute] string guid, [FromBody] UpdatePictureDto dto)
     {
-        _loggerService.Log($"User {Request.GetId()} wanted to update picture with id: {id}");
         try
         {
             //TODO return updated picture 
-            await _pictureServices.UpdatePicture(id, dto);
+            await _pictureServices.UpdatePicture(Guid.Parse(guid), dto);
             return Ok();
         }
         catch (NotFoundException e)

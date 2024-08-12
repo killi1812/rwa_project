@@ -8,7 +8,7 @@ using System.Linq;
 
 public static class JwtHelpers
 {
-    public static int? GetId(this HttpRequest request)
+    public static Guid? GetGuid(this HttpRequest request)
     {
         {
             if (!request.Headers.ContainsKey("Authorization"))
@@ -20,8 +20,8 @@ public static class JwtHelpers
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
-            var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "Id");
-            return Int16.Parse(userIdClaim?.Value!);
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "guid");
+            return Guid.Parse(userIdClaim?.Value!);
         }
     }
 }

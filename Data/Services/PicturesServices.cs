@@ -9,10 +9,10 @@ namespace Data.Services;
 public interface IPictureServices
 {
     Task<IList<Picture>> GetPictures(int page = 1, int n = 10);
-    Task<Picture> GetPicture(int id);
-    Task DeletePicture(int id);
-    Task UpdatePicture(int id, UpdatePictureDto dto);
-    Task<Picture> CreatePicture(NewPictureDto newPictureDto, int id);
+    Task<Picture> GetPicture(Guid guid);
+    Task DeletePicture(Guid guid);
+    Task UpdatePicture(Guid guid, UpdatePictureDto dto);
+    Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid);
     Task<List<Picture>> SearchPictures(string query);
 }
 
@@ -34,26 +34,33 @@ public class PictureServices : IPictureServices
         var pictures = await _context.Pictures
             .Skip((page - 1) * n)
             .Take(n)
+            .Include(p => p.User)
+            .Include(p => p.PictureTags)
+            .ThenInclude(pt => pt.Tag)
             .ToListAsync();
         return pictures;
     }
 
-    public async Task<Picture> GetPicture(int id)
+    public async Task<Picture> GetPicture(Guid guid)
     {
         var picture = await _context.Pictures
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .Include(p => p.User)
+            .Include(p => p.PictureTags)
+            .ThenInclude(pt => pt.Tag)
+            .FirstOrDefaultAsync(p => p.Guid == guid);
 
         if (picture == null)
             //TODO add notfound exception
             throw new NotFoundException("Picture not found");
 
+        _loggerService.Log($"User ${picture.User.Username} gets picture with guid {guid}");
         return picture;
     }
 
-    public async Task<Picture> CreatePicture(NewPictureDto newPictureDto, int id)
+    public async Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid)
     {
         //TODO Add guids
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && u.Admin);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == guid && u.Admin);
         if (user == null)
             throw new NotFoundException("User not found");
 
@@ -61,7 +68,7 @@ public class PictureServices : IPictureServices
         {
             Name = $"{newPictureDto.Name}.{newPictureDto.Data.ContentType.Split("/")[1]}",
             Photographer = newPictureDto.Photographer,
-            UserId = id,
+            UserId = user.Id,
         };
 
         lock (picture)
@@ -101,9 +108,9 @@ public class PictureServices : IPictureServices
     }
 
 
-    public async Task DeletePicture(int id)
+    public async Task DeletePicture(Guid guid)
     {
-        var picture = _context.Pictures.FirstOrDefault(p => p.Id == id);
+        var picture = _context.Pictures.FirstOrDefault(p => p.Guid == guid);
         if (picture == null)
             throw new NotFoundException("Picture not found");
 
@@ -113,13 +120,13 @@ public class PictureServices : IPictureServices
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdatePicture(int id, UpdatePictureDto dto)
+    public async Task UpdatePicture(Guid guid, UpdatePictureDto dto)
     {
-        var picture = _context.Pictures.FirstOrDefault(p => p.Id == id);
+        var picture = _context.Pictures.FirstOrDefault(p => p.Guid == guid);
         if (picture == null)
             throw new NotFoundException("Picture not found");
 
-        StringBuilder sb = new($"Picture {id} updated: ");
+        StringBuilder sb = new($"Picture {guid} updated: ");
         if (dto.Name != null)
         {
             picture.Name = dto.Name;

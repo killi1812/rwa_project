@@ -79,7 +79,7 @@ public class UserServices : IUserServices
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
-                new("Id", user.Id.ToString())
+                new("guid", user.Guid.ToString())
             }),
             Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials =
