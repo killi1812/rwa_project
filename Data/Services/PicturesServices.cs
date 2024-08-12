@@ -77,10 +77,12 @@ public class PictureServices : IPictureServices
         {
             byte[] data = new byte[newPictureDto.Data.Length];
             newPictureDto.Data.OpenReadStream().Read(data);
-            picture.Data = data;
-
-
+            picture.PictureByte = new PictureByte
+            {
+                Data = data,
+            };
             _context.Pictures.Add(picture);
+            _context.PictureBytes.Add(picture.PictureByte);
             _context.SaveChanges();
         }
 
@@ -111,12 +113,14 @@ public class PictureServices : IPictureServices
 
     public async Task<byte[]> GetPictureData(Guid guid)
     {
-        var picture = await _context.Pictures.FirstOrDefaultAsync(p => p.Guid == guid);
+        var picture = await _context.Pictures.Where(p => p.Guid == guid)
+            .Include(p => p.PictureByte)
+            .FirstOrDefaultAsync();
         if (picture == null)
             throw new NotFoundException("Picture not found");
         //TODO add doenload log
         _loggerService.Log($"Picture data requested {picture.Name}");
-        return picture.Data;
+        return picture.PictureByte.Data;
     }
 
     public Task DownloadPicture(Guid guid)

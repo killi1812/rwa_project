@@ -15,9 +15,9 @@ public partial class Picture
 
     public int UserId { get; set; }
 
-    public byte[] Data { get; set; } = null!;
-
     public virtual ICollection<Download> Downloads { get; set; } = new List<Download>();
+
+    public virtual PictureByte? PictureByte { get; set; }
 
     public virtual ICollection<PictureTag> PictureTags { get; set; } = new List<PictureTag>();
 

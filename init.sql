@@ -13,6 +13,7 @@ CREATE TABLE users
     admin    bit                            NOT NULL,
     password VARCHAR(255)                   NOT NULL
 );
+
 -- 1-n relationship between users and pictures
 create table pictures
 (
@@ -21,8 +22,14 @@ create table pictures
     name         varchar(255)                   not null,
     photographer varchar(255)                   not null,
     userId       int                            not null,
-    data         varbinary(max)                 not null,
-    foreign key (userId) references users (id)
+    foreign key (userId) references users (id),
+);
+
+create table pictureBytes
+(
+    pictureId int primary key not null,
+    data      varbinary(max)  not null,
+    foreign key (pictureId) references pictures (id)
 );
 
 create table tags
