@@ -136,7 +136,7 @@ public class FotografijaController : ControllerBase
     public async Task<IActionResult> Search([FromQuery] string query)
     {
         var pics = await _pictureServices.SearchPictures(query);
-        return Ok(pics);
+        return Ok(_mapper.Map<List<PictureDto>>(pics));
     }
 
     [HttpGet("[action]/{guid}")]

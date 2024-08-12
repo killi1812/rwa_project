@@ -15,6 +15,7 @@ public interface IPictureServices
     Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid);
     Task<List<Picture>> SearchPictures(string query);
     Task<Byte[]> GetPictureData(Guid guid);
+    Task DownloadPicture(Guid guid);
 }
 
 public class PictureServices : IPictureServices
@@ -116,6 +117,11 @@ public class PictureServices : IPictureServices
         //TODO add doenload log
         _loggerService.Log($"Picture data requested {picture.Name}");
         return picture.Data;
+    }
+
+    public Task DownloadPicture(Guid guid)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task DeletePicture(Guid guid)
