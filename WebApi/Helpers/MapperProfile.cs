@@ -25,10 +25,5 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.user, opt => opt.MapFrom(src => src.User))
             .ForMember(dest => dest.tags,
                 opt => opt.MapFrom(src => src.PictureTags.Select(pt => pt.Tag.Name).ToList()));
-
-        //     CreateMap<NewUserDto, User>()
-        //         .ForMember(dest => dest.Password, opt => opt.Ignore())
-        //         .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => DateTime.Parse(src.DateOfBirth)));
-        //     CreateMap<UserLoginDto, User>();
     }
 }

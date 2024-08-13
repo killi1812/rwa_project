@@ -1,0 +1,21 @@
+@model List<PictureVM>
+@using WebApp.ViewModels
+@{
+    ViewData["Title"] = "Search Results";
+}
+<h1>
+    Search Results
+</h1>
+<div>
+    <hr/>
+    <ul>
+        @foreach (var picture in Model)
+        {
+            <li>
+                <a href="@Url.Action("Details", "Pictures", new { id = picture.Guid })">
+                    @picture.Name
+                </a>
+            </li>
+        }
+    </ul>
+</div>
