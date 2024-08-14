@@ -1,4 +1,5 @@
 using System.Text;
+using Data.Helpers;
 using Data.Models;
 using Data.Services;
 using WebApi.Helpers;
@@ -71,6 +72,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.SeedData();
 }
 
 app.UseHttpsRedirection();
