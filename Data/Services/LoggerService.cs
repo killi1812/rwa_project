@@ -1,3 +1,4 @@
+using Data.Helpers;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,8 +6,8 @@ namespace Data.Services;
 
 public interface ILoggerService
 {
-    public Task Log(string message);
-    public Task LogMany(string[] messages);
+    public Task Log(string message, ThreatLvl lvl = ThreatLvl.Low);
+    public Task LogMany(string[] messages, ThreatLvl lvl = ThreatLvl.Low);
     public Task<IList<Log>> GetLogs(int page, int n = 10);
     Task<int> GetLogsCount();
 }
@@ -14,14 +15,13 @@ public interface ILoggerService
 public class LoggerService : ILoggerService
 {
     private readonly RwaContext _context;
-    private readonly object objLock = new();
 
     public LoggerService(RwaContext context)
     {
         _context = context;
     }
 
-    public Task Log(string message)
+    public Task Log(string message, ThreatLvl lvl = ThreatLvl.Low)
     {
         var log = new Log
         {
@@ -37,7 +37,7 @@ public class LoggerService : ILoggerService
         return Task.CompletedTask;
     }
 
-    public Task LogMany(string[] messages)
+    public Task LogMany(string[] messages, ThreatLvl lvl = ThreatLvl.Low)
     {
         var logs = new List<Log>(messages.Length);
         foreach (var m in messages)

@@ -80,4 +80,5 @@ app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseMiddleware<ExceptionMiddleware>();
 app.Run();

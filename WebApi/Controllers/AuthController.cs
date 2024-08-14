@@ -33,20 +33,13 @@ public class AuthController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> Register([FromForm] NewUserDto user)
     {
-        try
+        var newUser = await _userServices.CreateUser(user);
+        var jwt = await _userServices.Login(new LoginUserDto()
         {
-            var newUser = await _userServices.CreateUser(user);
-            var jwt = await _userServices.Login(new LoginUserDto()
-            {
-                Password = user.Password,
-                Username = user.Username
-            });
-            return Ok(jwt);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+            Password = user.Password,
+            Username = user.Username
+        });
+        return Ok(jwt);
     }
 
     [HttpGet("[action]")]

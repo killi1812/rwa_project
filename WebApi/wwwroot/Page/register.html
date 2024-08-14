@@ -43,7 +43,6 @@
                     },
                     body: JSON.stringify(data)
                 });
-                debugger;
                 const result = await response.text();
                 if (response.ok) {
                     localStorage.setItem('jwt', result);
