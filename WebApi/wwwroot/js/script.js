@@ -6,7 +6,7 @@
     const nextPageButton = document.getElementById('nextPage');
 
     async function fetchLogs(token, page, n) {
-        const response = await fetch(`../api/Logs/GetLogs?page=${page}&n=${n}`, {
+        const response = await fetch(`../api/Logs/Get?page=${page}&n=${n}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             },
