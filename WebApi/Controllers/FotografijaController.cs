@@ -27,107 +27,45 @@ public class FotografijaController : ControllerBase
     [HttpGet("[action]")]
     public async Task<IActionResult> GetPaginated([FromQuery] int page = 1, [FromQuery] int n = 10)
     {
-        try
-        {
-            var pictures = await _pictureServices.GetPictures(page, n);
-            _loggerService.Log(
-                $"User {Request.GetGuid()} pictures from page: {page}, count: {pictures.Count}");
-            return Ok(_mapper.Map<List<PictureDto>>(pictures));
-        }
-        catch (NotFoundException e)
-        {
-            return NotFound(e.Message);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
+        var pictures = await _pictureServices.GetPictures(page, n);
+        _loggerService.Log(
+            $"User {Request.GetGuid()} pictures from page: {page}, count: {pictures.Count}");
+        return Ok(_mapper.Map<List<PictureDto>>(pictures));
     }
 
     [HttpGet("[action]/{guid}")]
     public async Task<IActionResult> Get([FromRoute] string guid)
     {
-        try
-        {
-            var pictures = await _pictureServices.GetPicture(Guid.Parse(guid));
-            return Ok(_mapper.Map<PictureDto>(pictures));
-        }
-        catch (NotFoundException e)
-        {
-            _loggerService.Log($"Failed to get fotografija");
-            return NotFound(e.Message);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
+        var pictures = await _pictureServices.GetPicture(Guid.Parse(guid));
+        return Ok(_mapper.Map<PictureDto>(pictures));
     }
 
     [Authorize]
     [HttpPost("[action]")]
     public async Task<IActionResult> Create([FromForm] NewPictureDto newPictureDto)
     {
-        try
-        {
-            var guid = Request.GetGuid();
-            if (guid == null) return BadRequest("guid is null");
-            //TODO return created picture
-            await _pictureServices.CreatePicture(newPictureDto, guid.Value);
-            return Ok();
-        }
-        catch (NotFoundException e)
-        {
-            _loggerService.Log($"Failed to create {e.Message}");
-            return NotFound(e.Message);
-        }
-        catch (Exception e)
-        {
-            _loggerService.Log($"Failed to create {e.Message}");
-            return StatusCode(500, e.Message);
-        }
+        var guid = Request.GetGuid();
+        if (guid == null) return BadRequest("guid is null");
+        //TODO return created picture
+        await _pictureServices.CreatePicture(newPictureDto, guid.Value);
+        return Ok();
     }
 
     [Authorize]
     [HttpDelete("[action]/{guid}")]
     public async Task<IActionResult> Delete([FromRoute] string guid)
     {
-        try
-        {
-            await _pictureServices.DeletePicture(Guid.Parse(guid));
-            return Ok();
-        }
-        catch (NotFoundException e)
-        {
-            _loggerService.Log($"Failed to delete {e.Message}");
-            return NotFound(e.Message);
-        }
-        catch (Exception e)
-        {
-            _loggerService.Log($"Failed to delete {e.Message}");
-            return StatusCode(500, e.Message);
-        }
+        await _pictureServices.DeletePicture(Guid.Parse(guid));
+        return Ok();
     }
 
     [Authorize]
     [HttpPut("[action]/{guid}")]
     public async Task<IActionResult> Update([FromRoute] string guid, [FromBody] UpdatePictureDto dto)
     {
-        try
-        {
-            //TODO return updated picture 
-            await _pictureServices.UpdatePicture(Guid.Parse(guid), dto);
-            return Ok();
-        }
-        catch (NotFoundException e)
-        {
-            _loggerService.Log($"Failed to update {e.Message}");
-            return NotFound(e.Message);
-        }
-        catch (Exception e)
-        {
-            _loggerService.Log($"Failed to update {e.Message}");
-            return StatusCode(500, e.Message);
-        }
+        //TODO return updated picture 
+        await _pictureServices.UpdatePicture(Guid.Parse(guid), dto);
+        return Ok();
     }
 
     [HttpGet("[action]")]

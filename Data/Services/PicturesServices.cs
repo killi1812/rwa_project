@@ -60,9 +60,12 @@ public class PictureServices : IPictureServices
 
     public async Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == guid && u.Admin);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == guid);
         if (user == null)
             throw new NotFoundException("User not found");
+
+        if (!user.Admin)
+            throw new UnauthorizedException($"User {user.Username} is not an admin");
 
         var picture = new Picture
         {
@@ -155,9 +158,9 @@ public class PictureServices : IPictureServices
             sb.Append($"Photographer changed to {dto.Photographer}");
         }
 
+        //TODO Remove old tags and add new tags 
 //        var tags = await GetTags(newPictureDto.Tags);
         _loggerService.Log(sb.ToString());
-        //TODO Remove old tags and add new tags 
         await _context.SaveChangesAsync();
     }
 }

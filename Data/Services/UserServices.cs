@@ -69,7 +69,7 @@ public class UserServices : IUserServices
         if (!result)
         {
             _loggerService.Log($"Wrong password for user: {userDto.Username}");
-            throw new WrongCredentialsException();
+            throw new UnauthorizedException("Wrong password");
         }
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -99,7 +99,7 @@ public class UserServices : IUserServices
         if (!result)
         {
             _loggerService.Log($"Wrong password for user: {user.Username}");
-            throw new WrongCredentialsException();
+            throw new UnauthorizedException("Wrong password");
         }
 
         user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);

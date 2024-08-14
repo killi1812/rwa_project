@@ -19,15 +19,8 @@ public class AuthController : ControllerBase
     [HttpPut("[action]")]
     public async Task<IActionResult> Login([FromBody] LoginUserDto user)
     {
-        try
-        {
-            var jwt = await _userServices.Login(user);
-            return Ok(jwt);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        var jwt = await _userServices.Login(user);
+        return Ok(jwt);
     }
 
     [HttpPost("[action]")]
@@ -45,25 +38,9 @@ public class AuthController : ControllerBase
     [HttpGet("[action]")]
     public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
     {
-        try
-        {
-            //TODO
-            var userGuid = Request.GetGuid();
-            if (userGuid == null) return BadRequest("Guid can't be null");
-            await _userServices.ChangePassword(userGuid.Value, oldPassword, newPassword);
-            return Ok();
-        }
-        catch (WrongCredentialsException e)
-        {
-            return Unauthorized(e.Message);
-        }
-        catch (NotFoundException e)
-        {
-            return NotFound(e.Message);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
+        var userGuid = Request.GetGuid();
+        if (userGuid == null) return BadRequest("Guid can't be null");
+        await _userServices.ChangePassword(userGuid.Value, oldPassword, newPassword);
+        return Ok();
     }
 }

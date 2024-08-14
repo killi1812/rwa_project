@@ -40,7 +40,7 @@ public class ExceptionMiddleware
                 response = new ExceptionResponse(HttpStatusCode.NotFound, exception.Message);
                 _loggerService.Log(exception.Message);
                 break;
-            case WrongCredentialsException:
+            case UnauthorizedException:
                 response = new ExceptionResponse(HttpStatusCode.Unauthorized, exception.Message);
                 _loggerService.Log(exception.Message, ThreatLvl.High);
                 break;
