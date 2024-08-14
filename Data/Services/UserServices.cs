@@ -16,6 +16,7 @@ public interface IUserServices
 {
     public Task<User> CreateUser(NewUserDto user);
     public Task<string> Login(LoginUserDto user);
+    Task ChangePassword(Guid userGuid, string oldPassword, string newPassword);
 }
 
 public class UserServices : IUserServices
@@ -68,7 +69,7 @@ public class UserServices : IUserServices
         if (!result)
         {
             _loggerService.Log($"Wrong password for user: {userDto.Username}");
-            throw new Exception("Invalid password");
+            throw new WrongCredentialsException();
         }
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -86,5 +87,22 @@ public class UserServices : IUserServices
         var token = tokenHandler.CreateToken(tokenDescriptor);
         _loggerService.Log($"User {user.Username} logged in");
         return tokenHandler.WriteToken(token);
+    }
+
+    public async Task ChangePassword(Guid userGuid, string oldPassword, string newPassword)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == userGuid);
+        if (user == null)
+            throw new NotFoundException("User not fund");
+
+        var result = BCrypt.Net.BCrypt.Verify(oldPassword, user.Password);
+        if (!result)
+        {
+            _loggerService.Log($"Wrong password for user: {user.Username}");
+            throw new WrongCredentialsException();
+        }
+
+        user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        await _context.SaveChangesAsync();
     }
 }

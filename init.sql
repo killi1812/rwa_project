@@ -1,10 +1,10 @@
 --TODO mby rename 
 CREATE DATABASE rwa;
 GO
-
 USE rwa;
-GO
 
+GO
+-- 1-to-N 
 CREATE TABLE users
 (
     id       INT IDENTITY (1,1) PRIMARY KEY NOT NULL,
@@ -14,24 +14,25 @@ CREATE TABLE users
     password VARCHAR(255)                   NOT NULL
 );
 
--- 1-n relationship between users and pictures
+-- 1-to-N 
 create table pictures
 (
     id           int identity (1,1) primary key not null,
     guid         UNIQUEIDENTIFIER               NOT NULL,
     name         varchar(255)                   not null,
+    description  varchar(255)                   not null,
     photographer varchar(255)                   not null,
     userId       int                            not null,
     foreign key (userId) references users (id),
 );
-
+-- 1-to-1
 create table pictureBytes
 (
     pictureId int primary key not null,
     data      varbinary(max)  not null,
     foreign key (pictureId) references pictures (id)
 );
-
+-- M-to-N
 create table tags
 (
     id   int identity (1,1) primary key not null,
@@ -39,7 +40,7 @@ create table tags
     name varchar(255)                   not null
 );
 
--- m-n relationship between pictures and tags
+-- M-to-N-bridge
 create table pictureTags
 (
     id        int identity (1,1) primary key not null,
@@ -49,7 +50,7 @@ create table pictureTags
     foreign key (tagId) references tags (id)
 );
 
--- m-n relationship between users and pictures
+-- 1-to-N 
 create table downloads
 (
     id        int identity (1,1) primary key not null,
@@ -61,6 +62,7 @@ create table downloads
 );
 GO
 
+-- 1-to-N
 create table logs
 (
     id      int identity (1,1) primary key not null,

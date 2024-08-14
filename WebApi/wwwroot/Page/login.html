@@ -31,7 +31,7 @@
                     username: document.getElementById('username').value,
                     password: document.getElementById('password').value
                 };
-                const response = await fetch('../api/User/Login', {
+                const response = await fetch('../api/auth/Login', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'

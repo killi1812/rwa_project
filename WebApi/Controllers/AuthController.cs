@@ -1,4 +1,5 @@
 using Data.Dto;
+using Data.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Data.Services;
 
@@ -6,11 +7,11 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : ControllerBase
+public class AuthController : ControllerBase
 {
     private readonly IUserServices _userServices;
 
-    public UserController(IUserServices userServices)
+    public AuthController(IUserServices userServices)
     {
         _userServices = userServices;
     }
@@ -45,6 +46,31 @@ public class UserController : ControllerBase
         catch (Exception e)
         {
             return BadRequest(e.Message);
+        }
+    }
+
+    [HttpGet("[action]")]
+    public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
+    {
+        try
+        {
+            //TODO
+            var userGuid = Request.GetGuid();
+            if (userGuid == null) return BadRequest("Guid can't be null");
+            await _userServices.ChangePassword(userGuid.Value, oldPassword, newPassword);
+            return Ok();
+        }
+        catch (WrongCredentialsException e)
+        {
+            return Unauthorized(e.Message);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
         }
     }
 }

@@ -22,7 +22,7 @@ public class LogsController : ControllerBase
     }
 
     [HttpGet("[action]")]
-    public async Task<IActionResult> GetLogs([FromQuery] int page = 1, int n = 10)
+    public async Task<IActionResult> Get([FromQuery] int page = 1, int n = 10)
     {
         try
         {
@@ -32,6 +32,19 @@ public class LogsController : ControllerBase
         catch (NotFoundException e)
         {
             return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    [HttpGet("[action]")]
+    public async Task<IActionResult> Count()
+    {
+        try
+        {
+            var count = await _logServices.GetLogsCount();
+            return Ok(count);
         }
         catch (Exception e)
         {

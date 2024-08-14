@@ -8,6 +8,7 @@ public interface ILoggerService
     public Task Log(string message);
     public Task LogMany(string[] messages);
     public Task<IList<Log>> GetLogs(int page, int n = 10);
+    Task<int> GetLogsCount();
 }
 
 public class LoggerService : ILoggerService
@@ -64,5 +65,11 @@ public class LoggerService : ILoggerService
             .Take(n)
             .ToListAsync();
         return logs;
+    }
+
+    public async Task<int> GetLogsCount()
+    {
+        var count = await _context.Logs.CountAsync();
+        return count;
     }
 }
