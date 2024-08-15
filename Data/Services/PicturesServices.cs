@@ -14,7 +14,7 @@ public interface IPictureServices
     Task DeletePicture(Guid guid);
     Task UpdatePicture(Guid guid, UpdatePictureDto dto);
     Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid);
-    Task<List<Picture>> SearchPictures(string query, int page = 1, int n = 10);
+    Task<List<Picture>> SearchPictures(string query);
     Task<Byte[]> GetPictureData(Guid guid);
     Task DownloadPicture(Guid guid);
 }
@@ -97,7 +97,7 @@ public class PictureServices : IPictureServices
         return pic;
     }
 
-    public async Task<List<Picture>> SearchPictures(string query, int page = 1, int n = 10)
+    public async Task<List<Picture>> SearchPictures(string query)
     {
         var pic = _context.Pictures
             .Where(p =>

@@ -5,6 +5,7 @@ using Data.Models;
 using Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Models;
 
 namespace WebApi.Controllers;
 
@@ -71,9 +72,10 @@ public class FotografijaController : ControllerBase
     [HttpGet("[action]")]
     public async Task<IActionResult> Search([FromQuery] string query, [FromQuery] int page = 1, [FromQuery] int n = 10)
     {
-        var pics = await _pictureServices.SearchPictures(query, page, n);
+        var pics = await _pictureServices.SearchPictures(query);
         //TODO return whole mapped object
-        return Ok(_mapper.Map<List<PictureDto>>(pics));
+        var picsPag = new Pagineted<PictureDto>(_mapper.Map<List<PictureDto>>(pics), page, n);
+        return Ok(picsPag);
     }
 
     [HttpGet("[action]/{guid}")]

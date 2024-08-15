@@ -29,7 +29,7 @@ public class PicturesController : Controller
         List<PictureVM> pictures;
         if (picsSession == null || oldQuery != query)
         {
-            var pics = await _pictureServices.SearchPictures(query, page, n);
+            var pics = await _pictureServices.SearchPictures(query);
             pictures = _mapper.Map<List<PictureVM>>(pics);
             HttpContext.Session.SetString("query", query);
             HttpContext.Session.SetString("pictures", pictures.ToJson());
