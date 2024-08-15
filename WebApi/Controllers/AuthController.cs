@@ -19,7 +19,7 @@ public class AuthController : ControllerBase
     [HttpPut("[action]")]
     public async Task<IActionResult> Login([FromBody] LoginUserDto user)
     {
-        var jwt = await _userServices.Login(user);
+        var jwt = await _userServices.LoginJwt(user);
         return Ok(jwt);
     }
 
@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromForm] NewUserDto user)
     {
         var newUser = await _userServices.CreateUser(user);
-        var jwt = await _userServices.Login(new LoginUserDto()
+        var jwt = await _userServices.LoginJwt(new LoginUserDto()
         {
             Password = user.Password,
             Username = user.Username

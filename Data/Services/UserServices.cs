@@ -15,7 +15,8 @@ namespace Data.Services;
 public interface IUserServices
 {
     public Task<User> CreateUser(NewUserDto user);
-    public Task<string> Login(LoginUserDto user);
+    public Task<string> LoginJwt(LoginUserDto user);
+    public Task<string> LoginCookie(string username, string password);
     Task ChangePassword(Guid userGuid, string oldPassword, string newPassword);
 }
 
@@ -56,7 +57,7 @@ public class UserServices : IUserServices
         return user;
     }
 
-    public async Task<string> Login(LoginUserDto userDto)
+    public async Task<string> LoginJwt(LoginUserDto userDto)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
         if (user == null)
@@ -87,6 +88,11 @@ public class UserServices : IUserServices
         var token = tokenHandler.CreateToken(tokenDescriptor);
         _loggerService.Log($"User {user.Username} logged in");
         return tokenHandler.WriteToken(token);
+    }
+
+    public Task<string> LoginCookie(string username, string password)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task ChangePassword(Guid userGuid, string oldPassword, string newPassword)

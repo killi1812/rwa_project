@@ -54,4 +54,11 @@ public class PicturesController : Controller
     {
         throw new NotImplementedException();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Data(string guid)
+    {
+        var data = await _pictureServices.GetPictureData(Guid.Parse(guid));
+        return File(data, "image/jpeg");
+    }
 }

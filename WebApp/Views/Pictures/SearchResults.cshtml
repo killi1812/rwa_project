@@ -1,4 +1,3 @@
-@using Microsoft.AspNetCore.Mvc.RazorPages
 @using WebApp.ViewModels
 @model SearchVM<PictureVM>
 @{
@@ -14,9 +13,12 @@
         @foreach (var picture in Model.Items ?? new List<PictureVM>())
         {
             <li>
-                <a href="@Url.Action("Details", "Pictures", new { id = picture.Guid })">
-                    @picture.Name
-                </a>
+                <div>
+                    <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name" style="max-width: 200px; max-height: 200px;"/>
+                    <a href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
+                        @picture.Name
+                    </a>
+                </div>
             </li>
         }
     </ul>
