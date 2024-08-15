@@ -1,5 +1,8 @@
+using System.Security.Claims;
 using Data.Dto;
 using Data.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
@@ -20,7 +23,11 @@ public class AuthController : Controller
 
     public async Task<IActionResult> LoginAction(string username, string password)
     {
-        // var cookie = await _userServices.LoginCookie(username, password);
+        var claims = await _userServices.LoginCookie(username, password);
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claims.claimsIdentity), claims.authProperties);
+
         HttpContext.Session.SetString("username", username);
         ViewData["username"] = username;
         return Redirect("/Home/Index");
@@ -53,7 +60,7 @@ public class AuthController : Controller
         return View();
     }
 
-    //TODO: See what exactly should this be 
+    //TODO: This should lead to a page where the user can change their password 
     public IActionResult EditAccount()
     {
         throw new NotImplementedException();
@@ -61,6 +68,7 @@ public class AuthController : Controller
 
     public IActionResult Logout()
     {
+        HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         HttpContext.Session.Remove("username");
         return Redirect("/Home/Index");
     }

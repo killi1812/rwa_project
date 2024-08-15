@@ -5,6 +5,8 @@ using AutoMapper;
 using Data.Dto;
 using Data.Helpers;
 using Data.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +18,11 @@ public interface IUserServices
 {
     public Task<User> CreateUser(NewUserDto user);
     public Task<string> LoginJwt(LoginUserDto user);
-    public Task<string> LoginCookie(string username, string password);
-    Task ChangePassword(Guid userGuid, string oldPassword, string newPassword);
+
+    public Task<(ClaimsIdentity claimsIdentity, AuthenticationProperties authProperties)> LoginCookie(string username,
+        string password);
+
+    public Task ChangePassword(Guid userGuid, string oldPassword, string newPassword);
 }
 
 public class UserServices : IUserServices
@@ -59,17 +64,11 @@ public class UserServices : IUserServices
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
         if (user == null)
-        {
-            _loggerService.Log($"Wrong username: {userDto.Username}", ThreatLvl.Medium);
-            throw new NotFoundException("User not found");
-        }
+            throw new NotFoundException($"User {userDto.Username} not found");
 
         var result = BCrypt.Net.BCrypt.Verify(userDto.Password, user.Password);
         if (!result)
-        {
-            _loggerService.Log($"Wrong password for user: {userDto.Username}", ThreatLvl.High);
-            throw new UnauthorizedException("Wrong password");
-        }
+            throw new UnauthorizedException($"Wrong password for user: {userDto.Username}");
 
         var tokenHandler = new JwtSecurityTokenHandler();
         byte[] key = Encoding.ASCII.GetBytes(_configuration["key"]);
@@ -88,23 +87,40 @@ public class UserServices : IUserServices
         return tokenHandler.WriteToken(token);
     }
 
-    public Task<string> LoginCookie(string username, string password)
+    public async Task<(ClaimsIdentity claimsIdentity, AuthenticationProperties authProperties)> LoginCookie(
+        string username,
+        string password)
     {
-        throw new NotImplementedException();
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+        if (user == null)
+            throw new NotFoundException($"User {username}  not found");
+
+        var result = BCrypt.Net.BCrypt.Verify(password, user.Password);
+        if (!result)
+            throw new UnauthorizedException($"Wrong password for user: {username}");
+
+        var claims = new List<Claim>();
+        claims.Add(new Claim("UserGuid", user.Guid.ToString()));
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var authProperties = new AuthenticationProperties
+        {
+            AllowRefresh = true,
+            ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+            IsPersistent = true,
+        };
+        return (claimsIdentity, authProperties);
     }
 
     public async Task ChangePassword(Guid userGuid, string oldPassword, string newPassword)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == userGuid);
         if (user == null)
-            throw new NotFoundException("User not fund");
+            throw new NotFoundException($"User with guid {userGuid} not fund");
 
         var result = BCrypt.Net.BCrypt.Verify(oldPassword, user.Password);
         if (!result)
-        {
-            _loggerService.Log($"Wrong password for user: {user.Username}", ThreatLvl.High);
-            throw new UnauthorizedException("Wrong password");
-        }
+            throw new UnauthorizedException($"Wrong password for user {user.Username}");
 
         user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
         await _context.SaveChangesAsync();
