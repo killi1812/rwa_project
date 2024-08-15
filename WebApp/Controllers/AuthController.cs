@@ -1,3 +1,4 @@
+using Data.Dto;
 using Data.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,9 +31,21 @@ public class AuthController : Controller
         return View();
     }
 
-    public IActionResult RegisterAction()
+    public async Task<IActionResult> RegisterAction(string username, string password, string password2)
     {
-        throw new NotImplementedException();
+        if (password != password2)
+        {
+            ViewData["error"] = "Passwords do not match";
+            return Redirect(nameof(Register));
+        }
+
+        _ = await _userServices.CreateUser(new NewUserDto
+        {
+            Username = username,
+            Password = password,
+            Admin = false,
+        });
+        return Redirect(nameof(Login));
     }
 
     public IActionResult Account()
@@ -48,6 +61,7 @@ public class AuthController : Controller
 
     public IActionResult Logout()
     {
-        throw new NotImplementedException();
+        HttpContext.Session.Remove("username");
+        return Redirect("/Home/Index");
     }
 }
