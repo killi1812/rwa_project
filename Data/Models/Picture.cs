@@ -11,6 +11,8 @@ public partial class Picture
 
     public string Name { get; set; } = null!;
 
+    public string Description { get; set; } = null!;
+
     public string Photographer { get; set; } = null!;
 
     public int UserId { get; set; }

@@ -31,14 +31,13 @@ public partial class RwaContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-    //TODO change to use appsettings.json
         => optionsBuilder.UseSqlServer("Server=localhost,1433;Database=rwa;User=sa;Password=password123!;Encrypt=False;TrustServerCertificate=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Download>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__download__3213E83FC2D3602A");
+            entity.HasKey(e => e.Id).HasName("PK__download__3213E83F61E18DFF");
 
             entity.ToTable("downloads");
 
@@ -62,7 +61,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<Log>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__logs__3213E83FD40384E3");
+            entity.HasKey(e => e.Id).HasName("PK__logs__3213E83FF5CACDEC");
 
             entity.ToTable("logs");
 
@@ -77,11 +76,15 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<Picture>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__pictures__3213E83F0B5C517C");
+            entity.HasKey(e => e.Id).HasName("PK__pictures__3213E83F08C74D10");
 
             entity.ToTable("pictures");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("description");
             entity.Property(e => e.Guid).HasColumnName("guid");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
@@ -101,7 +104,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<PictureByte>(entity =>
         {
-            entity.HasKey(e => e.PictureId).HasName("PK__pictureB__769A271AD6409370");
+            entity.HasKey(e => e.PictureId).HasName("PK__pictureB__769A271AF8F2C009");
 
             entity.ToTable("pictureBytes");
 
@@ -118,7 +121,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<PictureTag>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__pictureT__3213E83FA3E1DE09");
+            entity.HasKey(e => e.Id).HasName("PK__pictureT__3213E83F0B8F4659");
 
             entity.ToTable("pictureTags");
 
@@ -139,7 +142,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<Tag>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tags__3213E83F9391861F");
+            entity.HasKey(e => e.Id).HasName("PK__tags__3213E83FFC7C8F26");
 
             entity.ToTable("tags");
 
@@ -153,7 +156,7 @@ public partial class RwaContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__users__3213E83F01C27129");
+            entity.HasKey(e => e.Id).HasName("PK__users__3213E83F523538F3");
 
             entity.ToTable("users");
 

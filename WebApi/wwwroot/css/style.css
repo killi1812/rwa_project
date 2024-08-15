@@ -19,13 +19,31 @@
 
 .sm {
     width: 5rem;
-    margin:  2rem  2rem  2rem 0;
+    margin: 2rem 2rem 2rem 0;
 }
 
 .md {
     width: 10rem;
 }
-#page{
+
+table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#page {
     margin: auto;
     font: bold 1.5rem Arial;
+}
+
+.varn-low {
+    background: #198754;
+}
+
+.varn-high {
+    background: #dc3545;
+}
+
+.varn-medium {
+    background: #ffc107;
 }

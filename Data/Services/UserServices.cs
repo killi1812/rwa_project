@@ -38,12 +38,10 @@ public class UserServices : IUserServices
 
     public async Task<User> CreateUser(NewUserDto userDto)
     {
-        //TODO check if user exists
-
         var userExist = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
         if (userExist != null)
         {
-            _loggerService.Log($"User {userDto.Username} already exists");
+            _loggerService.Log($"User {userDto.Username} already exists", ThreatLvl.Medium);
             throw new Exception("User already exists");
         }
 
@@ -62,14 +60,14 @@ public class UserServices : IUserServices
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
         if (user == null)
         {
-            _loggerService.Log($"Wrong username: {userDto.Username}");
+            _loggerService.Log($"Wrong username: {userDto.Username}", ThreatLvl.Medium);
             throw new NotFoundException("User not found");
         }
 
         var result = BCrypt.Net.BCrypt.Verify(userDto.Password, user.Password);
         if (!result)
         {
-            _loggerService.Log($"Wrong password for user: {userDto.Username}");
+            _loggerService.Log($"Wrong password for user: {userDto.Username}", ThreatLvl.High);
             throw new UnauthorizedException("Wrong password");
         }
 
@@ -104,7 +102,7 @@ public class UserServices : IUserServices
         var result = BCrypt.Net.BCrypt.Verify(oldPassword, user.Password);
         if (!result)
         {
-            _loggerService.Log($"Wrong password for user: {user.Username}");
+            _loggerService.Log($"Wrong password for user: {user.Username}", ThreatLvl.High);
             throw new UnauthorizedException("Wrong password");
         }
 

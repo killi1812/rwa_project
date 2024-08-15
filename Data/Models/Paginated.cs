@@ -1,6 +1,6 @@
 namespace WebApp.Models;
 
-public class Pagineted<T>
+public class Paginated<T>
 {
     public IList<T> Items { get; set; }
     public int Page { get; set; }
@@ -11,7 +11,7 @@ public class Pagineted<T>
     public int ToPage { get; set; }
 
 
-    public Pagineted(IEnumerable<T> items, int page = 1, int count = 10)
+    public Paginated(IEnumerable<T> items, int page = 1, int count = 10)
     {
         Count = items.Count();
         Items = items.Skip((page - 1) * count).Take(count).ToList();

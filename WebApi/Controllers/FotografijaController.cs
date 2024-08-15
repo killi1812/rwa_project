@@ -74,7 +74,7 @@ public class FotografijaController : ControllerBase
     {
         var pics = await _pictureServices.SearchPictures(query);
         //TODO return whole mapped object
-        var picsPag = new Pagineted<PictureDto>(_mapper.Map<List<PictureDto>>(pics), page, n);
+        var picsPag = new Paginated<PictureDto>(_mapper.Map<List<PictureDto>>(pics), page, n);
         return Ok(picsPag);
     }
 

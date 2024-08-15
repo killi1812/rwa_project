@@ -4,6 +4,7 @@ using Data.Helpers;
 using Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Models;
 
 namespace WebApi.Controllers;
 
@@ -24,8 +25,10 @@ public class LogsController : ControllerBase
     [HttpGet("[action]")]
     public async Task<IActionResult> Get([FromQuery] int page = 1, int n = 10)
     {
-        var logs = await _logServices.GetLogs(page, n);
-        return Ok(_mapper.Map<IEnumerable<LogDto>>(logs));
+        var logs = await _logServices.GetLogs();
+        var logsDto = _mapper.Map<List<LogDto>>(logs);
+        var paginatedLogs = new Paginated<LogDto>(logsDto, page, n);
+        return Ok(paginatedLogs);
     }
 
     [HttpGet("[action]")]

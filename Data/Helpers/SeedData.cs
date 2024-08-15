@@ -8,7 +8,7 @@ namespace Data.Helpers;
 
 public static class SeedDataClass
 {
-    public static IApplicationBuilder SeedData(this IApplicationBuilder app)
+    public static async Task<IApplicationBuilder> SeedData(this IApplicationBuilder app)
     {
         ArgumentNullException.ThrowIfNull(app, nameof(app));
         using var scope = app.ApplicationServices.CreateScope();
@@ -16,9 +16,7 @@ public static class SeedDataClass
         var context = services.GetRequiredService<RwaContext>();
         if (context.Users.Any())
             return app;
-        SeedUsers(services);
-
-
+        await SeedUsers(services);
         return app;
     }
 

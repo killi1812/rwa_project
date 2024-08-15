@@ -73,6 +73,7 @@ public class PictureServices : IPictureServices
             Name = $"{newPictureDto.Name}.{newPictureDto.Data.ContentType.Split("/")[1]}",
             Photographer = newPictureDto.Photographer,
             UserId = user.Id,
+            Description = newPictureDto.Description
         };
 
         lock (picture)
@@ -130,11 +131,13 @@ public class PictureServices : IPictureServices
     public async Task DeletePicture(Guid guid)
     {
         var picture = _context.Pictures.FirstOrDefault(p => p.Guid == guid);
+        var pTags = _context.PictureTags.Where(pt => pt.PictureId == picture.Id);
         if (picture == null)
             throw new NotFoundException("Picture not found");
 
-        _loggerService.Log($"Picture {picture.Name} deleted");
+        _loggerService.Log($"Picture {picture.Name} deleted", ThreatLvl.High);
 
+        _context.PictureTags.RemoveRange(pTags);
         _context.Pictures.Remove(picture);
         await _context.SaveChangesAsync();
     }
@@ -160,7 +163,7 @@ public class PictureServices : IPictureServices
 
         //TODO Remove old tags and add new tags 
 //        var tags = await GetTags(newPictureDto.Tags);
-        _loggerService.Log(sb.ToString());
+        _loggerService.Log(sb.ToString(), ThreatLvl.Medium);
         await _context.SaveChangesAsync();
     }
 }

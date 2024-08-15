@@ -8,7 +8,7 @@ public interface ILoggerService
 {
     public Task Log(string message, ThreatLvl lvl = ThreatLvl.Low);
     public Task LogMany(string[] messages, ThreatLvl lvl = ThreatLvl.Low);
-    public Task<IList<Log>> GetLogs(int page, int n = 10);
+    public Task<List<Log>> GetLogs();
     Task<int> GetLogsCount();
 }
 
@@ -25,6 +25,7 @@ public class LoggerService : ILoggerService
     {
         var log = new Log
         {
+            Lvl = lvl.ToInt(),
             Message = message,
         };
 
@@ -44,6 +45,7 @@ public class LoggerService : ILoggerService
         {
             logs.Add(new()
             {
+                Lvl = lvl.ToInt(),
                 Message = m
             });
         }
@@ -57,12 +59,10 @@ public class LoggerService : ILoggerService
         return Task.CompletedTask;
     }
 
-    public async Task<IList<Log>> GetLogs(int page, int n = 10)
+    public async Task<List<Log>> GetLogs()
     {
         var logs = await _context.Logs
-            .OrderByDescending(l => l.Id)
-            .Skip((page - 1) * n)
-            .Take(n)
+            .OrderByDescending(l => l.Date)
             .ToListAsync();
         return logs;
     }

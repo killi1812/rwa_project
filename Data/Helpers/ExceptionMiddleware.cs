@@ -38,7 +38,7 @@ public class ExceptionMiddleware
         {
             case NotFoundException:
                 response = new ExceptionResponse(HttpStatusCode.NotFound, exception.Message);
-                _loggerService.Log(exception.Message);
+                _loggerService.Log(exception.Message, ThreatLvl.Medium);
                 break;
             case UnauthorizedException:
                 response = new ExceptionResponse(HttpStatusCode.Unauthorized, exception.Message);
@@ -46,7 +46,7 @@ public class ExceptionMiddleware
                 break;
             default:
                 response = new ExceptionResponse(HttpStatusCode.InternalServerError, exception.Message);
-                _loggerService.Log(exception.Message, ThreatLvl.Medium);
+                _loggerService.Log(exception.Message, ThreatLvl.High);
                 break;
         }
 

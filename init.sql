@@ -1,4 +1,8 @@
 --TODO mby rename 
+use master
+go 
+drop database rwa
+go 
 CREATE DATABASE rwa;
 GO
 USE rwa;
@@ -68,5 +72,5 @@ create table logs
     id      int identity (1,1) primary key not null,
     date    datetime                       not null,
     message varchar(max)                   not null,
---     TODO add lvl 
+    Lvl     int                            not null
 );

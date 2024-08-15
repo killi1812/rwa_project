@@ -39,7 +39,7 @@ public class PicturesController : Controller
             pictures = picsSession.FromJson<List<PictureVM>>();
         }
 
-        var picsPaginated = new Pagineted<PictureVM>(pictures, page, n);
+        var picsPaginated = new Paginated<PictureVM>(pictures, page, n);
         var searchVm = _mapper.Map<SearchVM<PictureVM>>(picsPaginated);
         searchVm.Query = query;
         TempData["pictures"] = searchVm.ToJson();
