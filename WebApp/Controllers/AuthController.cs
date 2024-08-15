@@ -17,9 +17,12 @@ public class AuthController : Controller
         return View();
     }
 
-    public IActionResult LoginAction(string username, string password)
+    public async Task<IActionResult> LoginAction(string username, string password)
     {
-        throw new NotImplementedException();
+        // var cookie = await _userServices.LoginCookie(username, password);
+        HttpContext.Session.SetString("username", username);
+        ViewData["username"] = username;
+        return Redirect("/Home/Index");
     }
 
     public IActionResult Register()

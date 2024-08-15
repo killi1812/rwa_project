@@ -8,6 +8,7 @@ public class HomeController : Controller
 {
     public IActionResult Index()
     {
+        var s = ViewData["username"];
         return View();
     }
 
