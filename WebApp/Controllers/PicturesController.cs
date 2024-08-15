@@ -1,4 +1,5 @@
 using AutoMapper;
+using Data.Models;
 using Data.Services;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
@@ -23,8 +24,23 @@ public class PicturesController : Controller
     /// Endpoint for searching pictures
     public async Task<IActionResult> Search(string query, int page = 1, int n = 10)
     {
-        var pictures = await _pictureServices.SearchPictures(query, page, n);
-        var searchVm = _mapper.Map<SearchVM<PictureVM>>(pictures);
+        var picsSession = HttpContext.Session.GetString("pictures");
+        var oldQuery = HttpContext.Session.GetString("query");
+        List<PictureVM> pictures;
+        if (picsSession == null || oldQuery != query)
+        {
+            var pics = await _pictureServices.SearchPictures(query, page, n);
+            pictures = _mapper.Map<List<PictureVM>>(pics);
+            HttpContext.Session.SetString("query", query);
+            HttpContext.Session.SetString("pictures", pictures.ToJson());
+        }
+        else
+        {
+            pictures = picsSession.FromJson<List<PictureVM>>();
+        }
+
+        var picsPaginated = new Pagineted<PictureVM>(pictures, page, n);
+        var searchVm = _mapper.Map<SearchVM<PictureVM>>(picsPaginated);
         searchVm.Query = query;
         TempData["pictures"] = searchVm.ToJson();
         return Redirect(nameof(SearchResults));

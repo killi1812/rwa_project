@@ -73,7 +73,7 @@ public class FotografijaController : ControllerBase
     {
         var pics = await _pictureServices.SearchPictures(query, page, n);
         //TODO return whole mapped object
-        return Ok(_mapper.Map<List<PictureDto>>(pics.Items));
+        return Ok(_mapper.Map<List<PictureDto>>(pics));
     }
 
     [HttpGet("[action]/{guid}")]
