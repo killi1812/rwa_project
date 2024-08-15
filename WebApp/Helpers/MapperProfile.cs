@@ -1,5 +1,6 @@
 using AutoMapper;
 using Data.Models;
+using WebApp.Models;
 using WebApp.ViewModels;
 
 namespace WebApp.Helpers;
@@ -11,5 +12,7 @@ public class MapperProfile : Profile
         CreateMap<Picture, PictureVM>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.PictureTags.Select(x => x.Tag.Name).ToList()));
+        CreateMap<Pagineted<Picture>, SearchVM<PictureVM>>()
+            .ForMember(dest => dest.Query, opt => opt.Ignore());
     }
 }

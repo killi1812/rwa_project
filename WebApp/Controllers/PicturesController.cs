@@ -2,6 +2,7 @@ using AutoMapper;
 using Data.Services;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
+using WebApp.Models;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
@@ -20,19 +21,13 @@ public class PicturesController : Controller
     }
 
     /// Endpoint for searching pictures
-    public async Task<IActionResult> Search(string query)
+    public async Task<IActionResult> Search(string query, int page = 1, int n = 10)
     {
-        try
-        {
-            var pictures = await _pictureServices.SearchPictures(query);
-            TempData["pictures"] = _mapper.Map<List<PictureVM>>(pictures).ToJson();
-            return Redirect(nameof(SearchResults));
-        }
-        catch (Exception e)
-        {
-            _loggerService.Log(e.Message);
-            return BadRequest();
-        }
+        var pictures = await _pictureServices.SearchPictures(query, page, n);
+        var searchVm = _mapper.Map<SearchVM<PictureVM>>(pictures);
+        searchVm.Query = query;
+        TempData["pictures"] = searchVm.ToJson();
+        return Redirect(nameof(SearchResults));
     }
 
     /// Endpoint for displaying search results
@@ -40,9 +35,9 @@ public class PicturesController : Controller
     {
         var pics = TempData["pictures"];
         if (pics == null)
-            return View(new List<PictureVM>());
+            return View(new SearchVM<PictureVM>());
 
-        var pictures = pics.ToString().FromJson<List<PictureVM>>();
+        var pictures = pics.ToString().FromJson<SearchVM<PictureVM>>();
         return View(pictures);
     }
 

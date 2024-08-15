@@ -1,7 +1,9 @@
-@model List<PictureVM>
+@using Microsoft.AspNetCore.Mvc.RazorPages
 @using WebApp.ViewModels
+@model SearchVM<PictureVM>
 @{
     ViewData["Title"] = "Search Results";
+    ViewData["query"] = Model.Query;
 }
 <h1>
     Search Results
@@ -9,7 +11,7 @@
 <div>
     <hr/>
     <ul>
-        @foreach (var picture in Model)
+        @foreach (var picture in Model.Items ?? new List<PictureVM>())
         {
             <li>
                 <a href="@Url.Action("Details", "Pictures", new { id = picture.Guid })">
@@ -18,4 +20,30 @@
             </li>
         }
     </ul>
-</div>
+    <hr/>
+    <div>
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Search", "Pictures", new { Page = 1, PageSize = Model.Size, query = Model.Query })">«</a>
+            </li>
+            @for (int i = Model.FromPage; i <= Model.ToPage; i++)
+            {
+                var linkText = i.ToString();
+                var linkClass = "page-item";
+                if (i == Model.Page)
+                {
+                    linkClass = "page-item active";
+                }
+
+                <li class="@linkClass">
+                    <a class="page-link" href="@Url.Action("Search", "Pictures", new { page = i, pageSize = Model.Size, query = Model.Query })">
+                        @linkText
+                    </a>
+                </li>
+            }
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Search", "Pictures", new { Page = Model.LastPage, PageSize = Model.Size, query = Model.Query })">»</a>
+            </li>
+        </ul >
+    </div >
+</div >

@@ -69,10 +69,11 @@ public class FotografijaController : ControllerBase
     }
 
     [HttpGet("[action]")]
-    public async Task<IActionResult> Search([FromQuery] string query)
+    public async Task<IActionResult> Search([FromQuery] string query, [FromQuery] int page = 1, [FromQuery] int n = 10)
     {
-        var pics = await _pictureServices.SearchPictures(query);
-        return Ok(_mapper.Map<List<PictureDto>>(pics));
+        var pics = await _pictureServices.SearchPictures(query, page, n);
+        //TODO return whole mapped object
+        return Ok(_mapper.Map<List<PictureDto>>(pics.Items));
     }
 
     [HttpGet("[action]/{guid}")]

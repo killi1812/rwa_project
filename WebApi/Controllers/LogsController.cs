@@ -25,7 +25,7 @@ public class LogsController : ControllerBase
     public async Task<IActionResult> Get([FromQuery] int page = 1, int n = 10)
     {
         var logs = await _logServices.GetLogs(page, n);
-        return Ok(_mapper.Map<IList<LogDto>>(logs));
+        return Ok(_mapper.Map<IEnumerable<LogDto>>(logs));
     }
 
     [HttpGet("[action]")]
