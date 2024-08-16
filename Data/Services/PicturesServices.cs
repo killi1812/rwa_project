@@ -16,7 +16,9 @@ public interface IPictureServices
     Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid);
     Task<List<Picture>> SearchPictures(string query);
     Task<Byte[]> GetPictureData(Guid guid);
-    Task DownloadPicture(Guid guid);
+    Task<int> GetDownloadsCount(Guid guid);
+    Task<(Picture pic, byte[] Data)> DownloadPicture(Guid guid, Guid userGuid);
+    Task<List<Picture>> SearchPictures(string query, string filter, int page, int i);
 }
 
 public class PictureServices : IPictureServices
@@ -48,6 +50,8 @@ public class PictureServices : IPictureServices
     {
         var picture = await _context.Pictures
             .Include(p => p.User)
+            .Include(p => p.Downloads)
+            .ThenInclude(d => d.User)
             .Include(p => p.PictureTags)
             .ThenInclude(pt => pt.Tag)
             .FirstOrDefaultAsync(p => p.Guid == guid);
@@ -123,8 +127,41 @@ public class PictureServices : IPictureServices
         return picture.PictureByte.Data;
     }
 
-    public Task DownloadPicture(Guid guid)
+    public async Task<int> GetDownloadsCount(Guid guid)
     {
+        var count = await _context.Downloads.CountAsync(d => d.Picture.Guid == guid);
+        return count;
+    }
+
+    public async Task<(Picture pic, byte[] Data)> DownloadPicture(Guid guid, Guid userGuid)
+    {
+        var pic = await _context.Pictures.FirstOrDefaultAsync(p => p.Guid == guid);
+        if (pic == null)
+            throw new NotFoundException($"Picture {guid} not found");
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == userGuid);
+
+        if (user == null)
+            throw new NotFoundException($"User with guid {userGuid} not found");
+
+        var picData = await _context.PictureBytes.FirstOrDefaultAsync(pb => pb.PictureId == pic.Id);
+        if (picData == null)
+            throw new NotFoundException($"Picture data for {guid} not found");
+
+        var download = new Download
+        {
+            PictureId = pic.Id,
+            UserId = user.Id
+        };
+        await _context.Downloads.AddAsync(download);
+        await _context.SaveChangesAsync();
+        _loggerService.Log($"User {user.Username} downloaded picture {pic.Name}");
+
+        return (pic, picData.Data);
+    }
+
+    public Task<List<Picture>> SearchPictures(string query, string filter, int page, int i)
+    {
+        //TODO pars string filter to enum
         throw new NotImplementedException();
     }
 

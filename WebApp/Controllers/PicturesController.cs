@@ -53,6 +53,12 @@ public class PicturesController : Controller
         return Redirect(nameof(SearchResults));
     }
 
+    public async Task<IActionResult> SearchFilter(string query, string filter, int page = 1, int n = 10)
+    {
+        var pisc = await _pictureServices.SearchPictures(query, filter, page, n);
+        throw new NotImplementedException();
+    }
+
     /// Endpoint for displaying search results
     public IActionResult SearchResults()
     {
@@ -68,16 +74,21 @@ public class PicturesController : Controller
     public async Task<IActionResult> Details(string guid)
     {
         var picture = await _pictureServices.GetPicture(Guid.Parse(guid));
-        var pictureVm = _mapper.Map<PictureVM>(picture);
+        var pictureVm = _mapper.Map<PictureDetailsVM>(picture);
+        
         return View(pictureVm);
     }
 
-    /// Endpoint for downloading a picture
-    [HttpGet]
-    [ValidateAntiForgeryToken]
-    public IActionResult Download()
+    public async Task<IActionResult> Download(string guid)
     {
-        throw new NotImplementedException();
+        var user = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value;
+        if (user == null)
+            return RedirectToAction("Login", "Auth");
+
+        var rez = await _pictureServices.DownloadPicture(Guid.Parse(guid), Guid.Parse(user));
+
+        return File(rez.Data, "image/jpeg", $"{rez.pic.Name}.jpeg");
+        // return RedirectToAction(nameof(Details), new { guid });
     }
 
     [HttpGet]
