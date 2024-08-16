@@ -1,0 +1,30 @@
+@model List<WebApp.ViewModels.Top10VM>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Top Tags</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Tag</th>
+                    <th>Photographers</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a href="@Url.Action("SearchFilter", "Pictures", new { query = item.TagName, filter = "tag" })">@item.TagName</a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("SearchFilter", "Pictures", new { query = item.Photographer, filter = "photographer" })">@item.Photographer</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

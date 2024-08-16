@@ -20,6 +20,8 @@ public interface IPictureServices
     Task<int> GetDownloadsCount(Guid guid);
     Task<(Picture pic, byte[] Data)> DownloadPicture(Guid guid, Guid userGuid);
     Task<List<Picture>> SearchPictures(string query, string filter, int page, int i);
+    Task<List<Tag>> GetTopTags(int n = 10);
+    Task<List<string>> GetTopPhotographers(int n = 10);
 }
 
 public class PictureServices : IPictureServices
@@ -177,6 +179,29 @@ public class PictureServices : IPictureServices
     {
         //TODO pars string filter to enum
         throw new NotImplementedException();
+    }
+
+    public async Task<List<Tag>> GetTopTags(int n = 10)
+    {
+        var tags = await _context.PictureTags
+            .GroupBy(pt => pt.Tag)
+            .OrderByDescending(g => g.Count())
+            .Take(n)
+            .Select(g => g.Key)
+            .ToListAsync();
+
+        return tags;
+    }
+
+    public async Task<List<string>> GetTopPhotographers(int n = 10)
+    {
+        var p = await _context.Pictures
+            .GroupBy(p => p.Photographer)
+            .OrderByDescending(g => g.Count())
+            .Take(n)
+            .Select(g => g.Key)
+            .ToListAsync();
+        return p;
     }
 
     public async Task DeletePicture(Guid guid)
