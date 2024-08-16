@@ -23,6 +23,7 @@ public interface IUserServices
         string password);
 
     public Task ChangePassword(Guid userGuid, string oldPassword, string newPassword);
+    Task<User> GetUser(Guid parse);
 }
 
 public class UserServices : IUserServices
@@ -131,5 +132,13 @@ public class UserServices : IUserServices
 
         user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<User> GetUser(Guid parse)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == parse);
+        if (user == null)
+            throw new NotFoundException($"User with guid {parse} not found");
+        return user;
     }
 }

@@ -1,6 +1,6 @@
 @model List<WebApp.ViewModels.PictureVM>
 @{
-    ViewData["Title"] = "Your Uploads";
+    var username = Context.User.Identity?.Name;
 }
 <div>
     <h1>Your Uploads</h1>

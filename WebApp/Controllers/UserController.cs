@@ -10,10 +10,12 @@ public class UserController : Controller
 {
     private readonly IPictureServices _pictureServices;
     private readonly IMapper _mapper;
+    private readonly IUserServices _userServices;
 
-    public UserController(IPictureServices pictureServices, IMapper mapper)
+    public UserController(IPictureServices pictureServices, IUserServices userServices, IMapper mapper)
     {
         _pictureServices = pictureServices;
+        _userServices = userServices;
         _mapper = mapper;
     }
 
@@ -24,13 +26,19 @@ public class UserController : Controller
     }
 
     [Authorize]
-    public async Task<IActionResult> YourUploads()
+    public async Task<IActionResult> UserUploads(string? guid)
     {
-        var userGuid = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value;
-        if (userGuid == null)
-            return BadRequest("User not found");
+        if (guid == null)
+        {
+            guid = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value;
+            if (guid == null)
+                return BadRequest("User not found");
+        }
 
-        var pics = await _pictureServices.GetPicturesFromUser(Guid.Parse(userGuid));
+        var user = await _userServices.GetUser(Guid.Parse(guid));
+        ViewData["Title"] = $"{user.Username} Uploads";
+        
+        var pics = await _pictureServices.GetPicturesFromUser(Guid.Parse(guid));
         var picsVm = _mapper.Map<List<PictureVM>>(pics);
         return View(picsVm);
     }
