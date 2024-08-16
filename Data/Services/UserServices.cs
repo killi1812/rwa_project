@@ -106,7 +106,8 @@ public class UserServices : IUserServices
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, user.Username),
-            new("UserGuid", user.Guid.ToString())
+            new("UserGuid", user.Guid.ToString()),
+            new("IsAdmin", user.Admin.ToString())
         };
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var authProperties = new AuthenticationProperties

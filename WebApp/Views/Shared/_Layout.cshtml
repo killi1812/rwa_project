@@ -16,10 +16,12 @@
                 var user = this.ViewContext.HttpContext.User;
                 bool loggedIn = false;
                 string username = "";
+                bool isAdmin = false;
                 if (user != null && !string.IsNullOrEmpty(user.Identity.Name))
                 {
                     loggedIn = true;
                     username = user.Identity.Name;
+                    isAdmin = user.Claims.FirstOrDefault(c => c.Type == "IsAdmin")?.Value == "True";
                 }
 
                 string? guid = ViewContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "guid")?.Value;
@@ -43,7 +45,7 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Top Photographers</a>
                     </li>
-                    @if (loggedIn)
+                    @if (isAdmin)
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Upload</a>

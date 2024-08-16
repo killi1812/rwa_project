@@ -15,7 +15,7 @@ public interface IPictureServices
     Task UpdatePicture(Guid guid, UpdatePictureDto dto);
     Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid);
     Task<List<Picture>> SearchPictures(string query);
-    Task<Byte[]> GetPictureData(Guid guid);
+    Task<byte[]> GetPictureData(Guid guid);
     Task<int> GetDownloadsCount(Guid guid);
     Task<(Picture pic, byte[] Data)> DownloadPicture(Guid guid, Guid userGuid);
     Task<List<Picture>> SearchPictures(string query, string filter, int page, int i);
