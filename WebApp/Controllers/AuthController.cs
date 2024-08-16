@@ -29,7 +29,6 @@ public class AuthController : Controller
             new ClaimsPrincipal(claims.claimsIdentity), claims.authProperties);
 
         HttpContext.Session.SetString("username", username);
-        ViewData["username"] = username;
         return Redirect("/Home/Index");
     }
 
@@ -46,7 +45,7 @@ public class AuthController : Controller
             return Redirect(nameof(Register));
         }
 
-        _ = await _userServices.CreateUser(new NewUserDto
+        await _userServices.CreateUser(new NewUserDto
         {
             Username = username,
             Password = password,
@@ -55,21 +54,22 @@ public class AuthController : Controller
         return Redirect(nameof(Login));
     }
 
-    public IActionResult Account()
-    {
-        return View();
-    }
 
     //TODO: This should lead to a page where the user can change their password 
-    public IActionResult EditAccount()
+    public IActionResult Account(string guid)
     {
-        throw new NotImplementedException();
+        var guidP = Guid.Parse(guid);
+        return View();
     }
 
     public IActionResult Logout()
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        HttpContext.Session.Remove("username");
         return Redirect("/Home/Index");
+    }
+
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 }

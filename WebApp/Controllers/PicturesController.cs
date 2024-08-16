@@ -24,6 +24,10 @@ public class PicturesController : Controller
     /// Endpoint for searching pictures
     public async Task<IActionResult> Search(string query, int page = 1, int n = 10)
     {
+        if (string.IsNullOrWhiteSpace(query))
+            //TODO redirect to most popular pics  
+            return Redirect(nameof(SearchResults));
+
         var picsSession = HttpContext.Session.GetString("pictures");
         var oldQuery = HttpContext.Session.GetString("query");
         List<PictureVM> pictures;

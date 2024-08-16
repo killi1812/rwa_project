@@ -16,7 +16,7 @@ namespace Data.Services;
 
 public interface IUserServices
 {
-    public Task<User> CreateUser(NewUserDto user);
+    public Task CreateUser(NewUserDto user);
     public Task<string> LoginJwt(LoginUserDto user);
 
     public Task<(ClaimsIdentity claimsIdentity, AuthenticationProperties authProperties)> LoginCookie(string username,
@@ -41,7 +41,7 @@ public class UserServices : IUserServices
         _loggerService = loggerService;
     }
 
-    public async Task<User> CreateUser(NewUserDto userDto)
+    public async Task CreateUser(NewUserDto userDto)
     {
         var userExist = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
         if (userExist != null)
@@ -50,14 +50,17 @@ public class UserServices : IUserServices
             throw new Exception("User already exists");
         }
 
-        var user = _mapper.Map<User>(userDto);
-        user.Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+        var user = new User
+        {
+            Username = userDto.Username,
+            Admin = userDto.Admin,
+            Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password)
+        };
 
         _loggerService.Log($"User {user.Username} created");
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
-        return user;
     }
 
     public async Task<string> LoginJwt(LoginUserDto userDto)
@@ -100,8 +103,11 @@ public class UserServices : IUserServices
         if (!result)
             throw new UnauthorizedException($"Wrong password for user: {username}");
 
-        var claims = new List<Claim>();
-        claims.Add(new Claim("UserGuid", user.Guid.ToString()));
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name, user.Username),
+            new("UserGuid", user.Guid.ToString())
+        };
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var authProperties = new AuthenticationProperties
         {

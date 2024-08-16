@@ -17,6 +17,16 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddAuthentication()
+    .AddCookie(o =>
+    {
+        o.LoginPath = "/Auth/Login";
+        o.LogoutPath = "/Auth/Logout";
+        o.AccessDeniedPath = "/Auth/AccessDenied";
+        o.SlidingExpiration = true;
+        o.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    });
+
 builder.Services.AddScoped<IPictureServices, PictureServices>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();

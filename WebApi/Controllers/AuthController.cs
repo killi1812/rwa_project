@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> Register([FromForm] NewUserDto user)
     {
-        var newUser = await _userServices.CreateUser(user);
+        await _userServices.CreateUser(user);
         var jwt = await _userServices.LoginJwt(new LoginUserDto()
         {
             Password = user.Password,

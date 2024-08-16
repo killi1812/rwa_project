@@ -38,7 +38,8 @@
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
             @{
-                string username = Context.Session.GetString("username");
+                string? username = this.ViewContext.HttpContext.User.Identity?.Name;
+                string? guid = this.ViewContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "guid")?.Value;
             }
             <ul class="navbar-nav flex-grow-1">
                 <div class="m-auto">
@@ -46,7 +47,7 @@
                 @if (username != null)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="EditAccount">@username</a>
+                        <a class="nav-link text-dark" href="@Url.Action("Account", "User", new { guid })">@username</a>
                     </li>
 
                     <li class="nav-item">
