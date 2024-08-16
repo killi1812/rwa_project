@@ -28,9 +28,12 @@ public class PicturesController : Controller
             //TODO redirect to most popular pics  
             return Redirect(nameof(SearchResults));
 
+        if (page == 0) page = 1;
+
         var picsSession = HttpContext.Session.GetString("pictures");
         var oldQuery = HttpContext.Session.GetString("query");
         List<PictureVM> pictures;
+
         if (picsSession == null || oldQuery != query)
         {
             var pics = await _pictureServices.SearchPictures(query);
@@ -62,9 +65,11 @@ public class PicturesController : Controller
     }
 
     /// Endpoint for displaying a picture
-    public IActionResult Details()
+    public async Task<IActionResult> Details(string guid)
     {
-        throw new NotImplementedException();
+        var picture = await _pictureServices.GetPicture(Guid.Parse(guid));
+        var pictureVm = _mapper.Map<PictureVM>(picture);
+        return View(pictureVm);
     }
 
     /// Endpoint for downloading a picture

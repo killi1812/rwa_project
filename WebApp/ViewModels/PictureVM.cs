@@ -5,14 +5,19 @@ namespace WebApp.ViewModels;
 
 public class PictureVM
 {
-    public int Id { get; set; }
     public string Guid { get; set; }
 
     [Display(Name = "Picture Name")]
     [Required(ErrorMessage = "There's not much sense of having a picture without the name, right?")]
     public string Name { get; set; }
 
-    [Display(Name = "Select Artist")] public int ArtistId { get; set; }
+    [Display(Name = "Description")] public string Description { get; set; }
+
+    [Display(Name = "Owner")]
+    [ValidateNever]
+    public string Username { get; set; }
+
+    public string UserGuid { get; set; }
 
     [Display(Name = "Photographer")]
     [ValidateNever]

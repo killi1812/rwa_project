@@ -1,0 +1,16 @@
+@model WebApp.ViewModels.PictureVM
+@{
+    ViewData["Title"] = "Details";
+    var picture = Model;
+}
+<div>
+    <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name"/>
+    <h1>@picture.Name</h1>
+    @foreach (var tag in picture.Tags)
+    {
+        <a href="@Url.Action("Search", "Pictures", new { query = tag })">@tag</a>
+    }
+    <p>@picture.Description</p>
+    <p>Photographer: <a href="@Url.Action("Search", "Pictures", new { query = picture.Photographer })">@picture.Photographer</a></p>
+    <p>Uploaded by: <a href="@Url.Action("Account", "User", new { guid = picture.UserGuid })">@picture.Username</a></p>
+</div>

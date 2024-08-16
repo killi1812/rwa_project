@@ -12,6 +12,18 @@
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container-fluid">
+            @{
+                var user = this.ViewContext.HttpContext.User;
+                bool loggedIn = false;
+                string username = "";
+                if (user != null && !string.IsNullOrEmpty(user.Identity.Name))
+                {
+                    loggedIn = true;
+                    username = user.Identity.Name;
+                }
+
+                string? guid = ViewContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "guid")?.Value;
+            }
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebApp</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -26,25 +38,30 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Top Tags</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Top Photographers</a>
                     </li>
+                    @if (loggedIn)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Upload</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Your Uploads</a>
+                        </li>
+                    }
                 </ul>
             </div>
             <form class="d-flex" role="search" asp-controller="Pictures" asp-action="Search">
                 <input name="query" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" value="@ViewData["query"]">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
-            @{
-                string? username = this.ViewContext.HttpContext.User.Identity?.Name;
-                string? guid = this.ViewContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "guid")?.Value;
-            }
             <ul class="navbar-nav flex-grow-1">
                 <div class="m-auto">
                 </div>
-                @if (username != null)
+                @if (loggedIn)
                 {
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="@Url.Action("Account", "User", new { guid })">@username</a>

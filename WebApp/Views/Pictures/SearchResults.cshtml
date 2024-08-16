@@ -7,6 +7,14 @@
 <h1>
     Search Results
 </h1>
+<form role="search" asp-controller="Pictures" asp-action="Search">
+    <div class="d-flex">
+        <input name="query" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" value="@ViewData["query"]">
+        @* TODO implement filters By tags and By photographers   *@
+        @* TODO order by date, name, size, etc. *@
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </div>
+</form>
 <div>
     <hr/>
     <ul>
@@ -24,6 +32,7 @@
     </ul>
     <hr/>
     <div>
+        @* TODO paginations should be in ajax *@
         <ul class="pagination">
             <li class="page-item">
                 <a class="page-link" href="@Url.Action("Search", "Pictures", new { Page = 1, PageSize = Model.Size, query = Model.Query })">«</a>
