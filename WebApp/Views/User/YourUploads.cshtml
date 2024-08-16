@@ -1,0 +1,21 @@
+@model List<WebApp.ViewModels.PictureVM>
+@{
+    ViewData["Title"] = "Your Uploads";
+}
+<div>
+    <h1>Your Uploads</h1>
+    <hr/>
+    <ul>
+        @foreach (var picture in Model)
+        {
+            <li>
+                <div>
+                    <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name" style="max-width: 200px; max-height: 200px;"/>
+                    <a href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
+                        @picture.Name
+                    </a>
+                </div>
+            </li>
+        }
+    </ul>
+</div>

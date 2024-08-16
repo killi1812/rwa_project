@@ -11,6 +11,7 @@ public interface IPictureServices
 {
     Task<IList<Picture>> GetPictures(int page = 1, int n = 10);
     Task<Picture> GetPicture(Guid guid);
+    Task<List<Picture>> GetPicturesFromUser(Guid guid);
     Task DeletePicture(Guid guid);
     Task UpdatePicture(Guid guid, UpdatePictureDto dto);
     Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid);
@@ -61,6 +62,19 @@ public class PictureServices : IPictureServices
 
         _loggerService.Log($"User ${picture.User.Username} gets picture with guid {guid}");
         return picture;
+    }
+
+    public async Task<List<Picture>> GetPicturesFromUser(Guid guid)
+    {
+        var pictures = await _context.Pictures
+            .Where(p => p.User.Guid == guid)
+            .Include(p => p.User)
+            .ThenInclude(u => u.Downloads)
+            .Include(p => p.PictureTags)
+            .ThenInclude(pt => pt.Tag)
+            .OrderByDescending(p => p.Id)
+            .ToListAsync();
+        return pictures;
     }
 
     public async Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid)
