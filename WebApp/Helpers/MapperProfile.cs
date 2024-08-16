@@ -25,6 +25,6 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.DownloadsCount, opt => opt.MapFrom(src => src.Downloads.Count))
             .ForMember(dest => dest.Downloads,
                 opt => opt.MapFrom(src =>
-                    src.Downloads.Select(x => $"{x.User.Username} downloaded {x.Date.ToString("hh:mm")}").ToList()));
+                    src.Downloads.Select(x => $"{x.User.Username} downloaded {x.Date:yy-MM-dd HH:mm}").ToList()));
     }
 }
