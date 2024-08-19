@@ -1,4 +1,5 @@
 using AutoMapper;
+using Data.Models;
 using Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +21,18 @@ public class UserController : Controller
     }
 
     [Authorize]
-    public IActionResult Account()
+    public async Task<IActionResult> Account(string guid)
     {
-        return View();
+        if (guid == null)
+        {
+            guid = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value;
+            if (guid == null)
+                return BadRequest("User not found");
+        }
+
+        var user = await _userServices.GetUser(Guid.Parse(guid));
+        var userVm = _mapper.Map<UserVM>(user);
+        return View(userVm);
     }
 
     [Authorize]
@@ -37,9 +47,26 @@ public class UserController : Controller
 
         var user = await _userServices.GetUser(Guid.Parse(guid));
         ViewData["Title"] = $"{user.Username} Uploads";
-        
+
         var pics = await _pictureServices.GetPicturesFromUser(Guid.Parse(guid));
         var picsVm = _mapper.Map<List<PictureVM>>(pics);
         return View(picsVm);
+    }
+
+    [Authorize]
+    public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
+    {
+        var userGuid = Guid.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value);
+        await _userServices.ChangePassword(userGuid, oldPassword, newPassword);
+        return Ok();
+    }
+
+    [Authorize]
+    public IActionResult EditUser(UserVM userVm)
+    {
+        var userGuid = Guid.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value);
+        var user = _mapper.Map<User>(userVm);
+        _userServices.EditUser(userGuid, user);
+        return Ok();
     }
 }

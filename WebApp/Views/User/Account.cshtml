@@ -1,0 +1,32 @@
+@model WebApp.ViewModels.UserVM
+@{
+    ViewData["Title"] = "Your Account";
+    bool isEditing = false;
+}
+<div>
+    <h1>Your Account</h1>
+    <button id="editButton" class="btn btn-secondary" onclick="toggleEdit()">Edit</button>
+    <form id="accountForm" asp-action="EditUser" asp-controller="User" style="display: none;">
+        <div class="form-group">
+            <label asp-for="Username" class="control-label"></label>
+            <input asp-for="Username" class="form-control" id="usernameInput"/>
+        </div>
+        <button class="btn btn-success" type="submit">Save</button>
+    </form>
+    <div id="accountDetails">
+        <h2 id="usernameDisplay">@Model.Username</h2>
+    </div>
+    @foreach (var download in Model.Downloads)
+    {
+        <p>@download</p>
+    }
+</div>
+
+<script>
+    function toggleEdit() {
+        const form = document.getElementById('accountForm');
+        const details = document.getElementById('accountDetails');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        details.style.display = details.style.display === 'none' ? 'block' : 'none';
+    }
+</script>

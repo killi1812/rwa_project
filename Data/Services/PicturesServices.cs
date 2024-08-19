@@ -3,6 +3,7 @@ using Data.Dto;
 using Data.Helpers;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using WebApp.Models;
 
 namespace Data.Services;
@@ -19,8 +20,8 @@ public interface IPictureServices
     Task<byte[]> GetPictureData(Guid guid);
     Task<int> GetDownloadsCount(Guid guid);
     Task<(Picture pic, byte[] Data)> DownloadPicture(Guid guid, Guid userGuid);
-    Task<List<Picture>> SearchPictures(string query, string filter, int page, int i);
-    Task<List<Tag?>> GetTopTags(int n = 10);
+    Task<List<Picture>> SearchPictures(string query, FilterType filter = FilterType.All);
+    Task<List<Tag>> GetTopTags(int n = 10);
     Task<List<string>> GetTopPhotographers(int n = 10);
 }
 
@@ -175,15 +176,46 @@ public class PictureServices : IPictureServices
         return (pic, picData.Data);
     }
 
-    public Task<List<Picture>> SearchPictures(string query, string filter, int page, int i)
+    public async Task<List<Picture>> SearchPictures(string query, FilterType filter = FilterType.All)
     {
-        //TODO pars string filter to enum
-        throw new NotImplementedException();
+        IQueryable<Picture> pics = null;
+        switch (filter)
+        {
+            case FilterType.Name:
+                pics = _context.Pictures.Where(p => p.Name.Contains(query));
+                break;
+            case FilterType.Photographer:
+                pics = _context.Pictures.Where(p => p.Photographer.Contains(query));
+                break;
+            case FilterType.Tag:
+                pics = _context.Pictures.Where(p => p.PictureTags.Any(pt => pt.Tag.Name.Contains(query)));
+                break;
+            case FilterType.Owner:
+                pics = _context.Pictures.Where(p => p.User.Username.Contains(query));
+                break;
+            case FilterType.All:
+                pics = _context.Pictures
+                    .Where(p =>
+                        p.Name.Contains(query) ||
+                        p.Photographer.Contains(query) ||
+                        p.PictureTags.Any(pt => pt.Tag.Name.Contains(query))
+                    );
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(filter), filter, null);
+        }
+
+        pics
+            .Include(p => p.PictureTags)
+            .ThenInclude(pt => pt.Tag)
+            .Include(p => p.User);
+
+        return await pics.ToListAsync();
     }
 
-    public async Task<List<Tag?>> GetTopTags(int n = 10)
+    public async Task<List<Tag>> GetTopTags(int n = 10)
     {
-        List<Tag?> tags = await _context.PictureTags
+        List<Tag> tags = await _context.PictureTags
             .GroupBy(pt => pt.Tag)
             .OrderByDescending(g => g.Count())
             .Take(n)

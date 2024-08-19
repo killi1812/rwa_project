@@ -25,6 +25,14 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.DownloadsCount, opt => opt.MapFrom(src => src.Downloads.Count))
             .ForMember(dest => dest.Downloads,
                 opt => opt.MapFrom(src =>
-                    src.Downloads.Select(x => $"{x.User.Username} downloaded {x.Date:yyyy-MM-dd HH:mm}").ToList()));
+                    src.Downloads.OrderByDescending(d => d.Date)
+                        .Select(x => $"{x.User.Username} downloaded {x.Date:yyyy-MM-dd HH:mm}").ToList()));
+        CreateMap<User, UserVM>()
+            .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))
+            .ForMember(dest => dest.Downloads,
+                opt => opt.MapFrom(src =>
+                    src.Downloads.OrderByDescending(d => d.Date)
+                        .Select(x => $"{x.User.Username} downloaded {x.Date:yyyy-MM-dd HH:mm}").ToList()))
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username));
     }
 }

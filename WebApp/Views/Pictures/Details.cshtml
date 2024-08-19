@@ -8,10 +8,10 @@
     <h1>@picture.Name</h1>
     @foreach (var tag in picture.Tags)
     {
-        <a href="@Url.Action("Search", "Pictures", new { query = tag })">@tag</a>
+        <a href="@Url.Action("Search", "Pictures", new { query = $"Tag={tag}" })">@tag</a>
     }
     <p>@picture.Description</p>
-    <p>Photographer: <a href="@Url.Action("Search", "Pictures", new { query = picture.Photographer })">@picture.Photographer</a></p>
+    <p>Photographer: <a href="@Url.Action("Search", "Pictures", new { query = $"Photographer={picture.Photographer}" })">@picture.Photographer</a></p>
     <p>Uploaded by: <a href="@Url.Action("UserUploads", "User", new { guid = picture.UserGuid })">@picture.Username</a></p>
     <a class="btn btn-outline-primary" href="@Url.Action("Download", "Pictures", new { guid = picture.Guid })">Download</a>
     <p>Downloads count: @picture.DownloadsCount</p>

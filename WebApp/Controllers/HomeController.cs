@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using AutoMapper;
-using Data.Models;
 using Data.Services;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
@@ -59,7 +58,6 @@ public class HomeController : Controller
             top10VMs.Add(t);
         }
 
-        //TODO combine and make top10vm
         return View(top10VMs);
     }
 

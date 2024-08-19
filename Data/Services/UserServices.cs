@@ -24,6 +24,7 @@ public interface IUserServices
 
     public Task ChangePassword(Guid userGuid, string oldPassword, string newPassword);
     Task<User> GetUser(Guid parse);
+    Task EditUser(Guid userGuid, User user);
 }
 
 public class UserServices : IUserServices
@@ -136,9 +137,19 @@ public class UserServices : IUserServices
 
     public async Task<User> GetUser(Guid parse)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == parse);
+        var user = await _context.Users
+            .Where(u => u.Guid == parse)
+            .Include(u => u.Downloads)
+            .FirstOrDefaultAsync();
         if (user == null)
             throw new NotFoundException($"User with guid {parse} not found");
         return user;
+    }
+
+    public async Task EditUser(Guid userGuid, User user)
+    {
+        var userOld = await _context.Users.FirstOrDefaultAsync(u => u.Guid == userGuid);
+        if (user == null)
+            throw new NotFoundException($"User with guid {userGuid} not found");
     }
 }

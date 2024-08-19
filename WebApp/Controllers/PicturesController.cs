@@ -29,6 +29,7 @@ public class PicturesController : Controller
             return Redirect(nameof(SearchResults));
 
         if (page == 0) page = 1;
+        //query filter=tag
 
         var picsSession = HttpContext.Session.GetString("pictures");
         var oldQuery = HttpContext.Session.GetString("query");
@@ -36,7 +37,8 @@ public class PicturesController : Controller
 
         if (picsSession == null || oldQuery != query)
         {
-            var pics = await _pictureServices.SearchPictures(query);
+            var q = parseQuery(query);
+            var pics = await _pictureServices.SearchPictures(q.Item1, q.Item2);
             pictures = _mapper.Map<List<PictureVM>>(pics);
             HttpContext.Session.SetString("query", query);
             HttpContext.Session.SetString("pictures", pictures.ToJson());
@@ -53,10 +55,18 @@ public class PicturesController : Controller
         return Redirect(nameof(SearchResults));
     }
 
-    public async Task<IActionResult> SearchFilter(string query, string filter, int page = 1, int n = 10)
+    private (string, FilterType) parseQuery(string query)
     {
-        var pisc = await _pictureServices.SearchPictures(query, filter, page, n);
-        throw new NotImplementedException();
+        try
+        {
+            var split = query.Split("=");
+            var filter = FilterTypeExtensions.ParseFilterType(split[0]);
+            return (split[1], filter);
+        }
+        catch (Exception)
+        {
+            return (query, FilterType.All);
+        }
     }
 
     /// Endpoint for displaying search results
@@ -75,7 +85,7 @@ public class PicturesController : Controller
     {
         var picture = await _pictureServices.GetPicture(Guid.Parse(guid));
         var pictureVm = _mapper.Map<PictureDetailsVM>(picture);
-        
+
         return View(pictureVm);
     }
 

@@ -18,10 +18,10 @@
                 {
                     <tr>
                         <td>
-                            <a href="@Url.Action("SearchFilter", "Pictures", new { query = item.TagName?.Name, filter = "tag" })">@item.TagName?.Name</a>
+                            <a href="@Url.Action("Search", "Pictures", new { query = $"Tag={item.TagName?.Name}" })">@item.TagName?.Name</a>
                         </td>
                         <td>
-                            <a href="@Url.Action("SearchFilter", "Pictures", new { query = item.Photographer, filter = "photographer" })">@item.Photographer</a>
+                            <a href="@Url.Action("Search", "Pictures", new { query = $"Photographer={item.Photographer}" })">@item.Photographer</a>
                         </td>
                     </tr>
                 }
