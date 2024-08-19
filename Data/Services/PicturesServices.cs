@@ -178,20 +178,21 @@ public class PictureServices : IPictureServices
 
     public async Task<List<Picture>> SearchPictures(string query, FilterType filter = FilterType.All)
     {
-        IQueryable<Picture> pics = null;
+        IQueryable<Picture> pics;
         switch (filter)
         {
             case FilterType.Name:
-                pics = _context.Pictures.Where(p => p.Name.Contains(query));
+                pics = _context.Pictures.Where(p => p.Name.Contains(query)).AsNoTracking();
                 break;
             case FilterType.Photographer:
-                pics = _context.Pictures.Where(p => p.Photographer.Contains(query));
+                pics = _context.Pictures.Where(p => p.Photographer.Contains(query)).AsNoTracking();
                 break;
             case FilterType.Tag:
-                pics = _context.Pictures.Where(p => p.PictureTags.Any(pt => pt.Tag.Name.Contains(query)));
+                pics = _context.Pictures.Where(p => p.PictureTags.Any(pt => pt.Tag.Name.Contains(query)))
+                    .AsNoTracking();
                 break;
             case FilterType.Owner:
-                pics = _context.Pictures.Where(p => p.User.Username.Contains(query));
+                pics = _context.Pictures.Where(p => p.User.Username.Contains(query)).AsNoTracking();
                 break;
             case FilterType.All:
                 pics = _context.Pictures
@@ -199,10 +200,10 @@ public class PictureServices : IPictureServices
                         p.Name.Contains(query) ||
                         p.Photographer.Contains(query) ||
                         p.PictureTags.Any(pt => pt.Tag.Name.Contains(query))
-                    );
+                    ).AsNoTracking();
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(filter), filter, null);
+                throw new ApplicationException($"{nameof(filter)}, {filter} not found");
         }
 
         pics
