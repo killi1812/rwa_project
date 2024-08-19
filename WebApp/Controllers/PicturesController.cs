@@ -22,7 +22,7 @@ public class PicturesController : Controller
     }
 
     /// Endpoint for searching pictures
-    public async Task<IActionResult> Search(string query, int page = 1, int n = 10)
+    public async Task<IActionResult> Search(string query, int page = 1, int n = 30)
     {
         if (string.IsNullOrWhiteSpace(query))
             //TODO redirect to most popular pics  

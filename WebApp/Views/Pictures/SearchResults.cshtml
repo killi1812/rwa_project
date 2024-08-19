@@ -9,33 +9,48 @@
 </h1>
 <form role="search" asp-controller="Pictures" asp-action="Search">
     <div class="d-flex">
-        <input name="query" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" value="@ViewData["query"]">
-        @* TODO implement filters By tags and By photographers   *@
+        <input name="query" class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+               value="@ViewData["query"]">
         @* TODO order by date, name, size, etc. *@
         <button class="btn btn-outline-success" type="submit">Search</button>
     </div>
 </form>
 <div>
     <hr/>
-    <ul>
+    <div style="
+        display: flex;
+        overflow-wrap: normal;
+        gap: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;">
         @foreach (var picture in Model.Items ?? new List<PictureVM>())
         {
-            <li>
-                <div>
-                    <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name" style="max-width: 200px; max-height: 200px;"/>
-                    <a href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
-                        @picture.Name
-                    </a>
-                </div>
-            </li>
+            //TODO put loading on images
+            <div>
+                <a class="card" style="height: 250px; width: 200px; text-decoration: none; color: black;"
+                   href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
+                    <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name"
+                         style="max-width: 200px; max-height: 200px;"/>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @picture.Name
+                        </h5>
+                        <p class="card-text">@picture.Description</p>
+
+                    </div>
+                </a>
+            </div>
         }
-    </ul>
+    </div>
     <hr/>
     <div>
         @* TODO paginations should be in ajax *@
         <ul class="pagination">
             <li class="page-item">
-                <a class="page-link" href="@Url.Action("Search", "Pictures", new { Page = 1, PageSize = Model.Size, query = Model.Query })">«</a>
+                <a class="page-link"
+                   href="@Url.Action("Search", "Pictures", new { Page = 1, PageSize = Model.Size, query = Model.Query })">
+                    «
+                </a>
             </li>
             @for (int i = Model.FromPage; i <= Model.ToPage; i++)
             {
@@ -47,14 +62,18 @@
                 }
 
                 <li class="@linkClass">
-                    <a class="page-link" href="@Url.Action("Search", "Pictures", new { page = i, pageSize = Model.Size, query = Model.Query })">
+                    <a class="page-link"
+                       href="@Url.Action("Search", "Pictures", new { page = i, pageSize = Model.Size, query = Model.Query })">
                         @linkText
                     </a>
                 </li>
             }
             <li class="page-item">
-                <a class="page-link" href="@Url.Action("Search", "Pictures", new { Page = Model.LastPage, PageSize = Model.Size, query = Model.Query })">»</a>
+                <a class="page-link"
+                   href="@Url.Action("Search", "Pictures", new { Page = Model.LastPage, PageSize = Model.Size, query = Model.Query })">
+                    »
+                </a>
             </li>
-        </ul >
-    </div >
-</div >
+        </ul>
+    </div>
+</div>
