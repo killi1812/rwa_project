@@ -1,5 +1,7 @@
 @model List<WebApp.ViewModels.Top10VM>
-
+@{
+    ViewData["Title"] = "Top 10";
+}
 <div class="container">
     <div class="row">
         <div class="col-md-12">
@@ -16,7 +18,7 @@
                 {
                     <tr>
                         <td>
-                            <a href="@Url.Action("SearchFilter", "Pictures", new { query = item.TagName, filter = "tag" })">@item.TagName</a>
+                            <a href="@Url.Action("SearchFilter", "Pictures", new { query = item.TagName?.Name, filter = "tag" })">@item.TagName?.Name</a>
                         </td>
                         <td>
                             <a href="@Url.Action("SearchFilter", "Pictures", new { query = item.Photographer, filter = "photographer" })">@item.Photographer</a>

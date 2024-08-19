@@ -20,7 +20,7 @@ public interface IPictureServices
     Task<int> GetDownloadsCount(Guid guid);
     Task<(Picture pic, byte[] Data)> DownloadPicture(Guid guid, Guid userGuid);
     Task<List<Picture>> SearchPictures(string query, string filter, int page, int i);
-    Task<List<Tag>> GetTopTags(int n = 10);
+    Task<List<Tag?>> GetTopTags(int n = 10);
     Task<List<string>> GetTopPhotographers(int n = 10);
 }
 
@@ -181,9 +181,9 @@ public class PictureServices : IPictureServices
         throw new NotImplementedException();
     }
 
-    public async Task<List<Tag>> GetTopTags(int n = 10)
+    public async Task<List<Tag?>> GetTopTags(int n = 10)
     {
-        var tags = await _context.PictureTags
+        List<Tag?> tags = await _context.PictureTags
             .GroupBy(pt => pt.Tag)
             .OrderByDescending(g => g.Count())
             .Take(n)

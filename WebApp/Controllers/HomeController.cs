@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using AutoMapper;
+using Data.Models;
 using Data.Services;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
@@ -28,15 +29,38 @@ public class HomeController : Controller
         return View();
     }
 
-    public async Task<IActionResult> TopTags()
+    public async Task<IActionResult> Top10()
     {
         var tags = await _pictureServices.GetTopTags();
         var photographers = await _pictureServices.GetTopPhotographers();
-        //TODO combine and make top10vm
-        var top10Vm = new Top10VM
+        List<Top10VM> top10VMs = new();
+        for (int i = 0; i < 10; i++)
         {
-        };
-        return View(top10Vm);
+            Top10VM t = new();
+            try
+            {
+                t.TagName = tags.ElementAt(i);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                t.TagName = null;
+            }
+
+            try
+            {
+                t.Photographer = photographers.ElementAt(i);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                t.Photographer = null;
+            }
+
+            if (t.TagName == null && t.Photographer == null) continue;
+            top10VMs.Add(t);
+        }
+
+        //TODO combine and make top10vm
+        return View(top10VMs);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
