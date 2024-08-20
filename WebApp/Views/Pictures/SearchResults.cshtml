@@ -1,3 +1,4 @@
+@using Microsoft.EntityFrameworkCore.Query
 @using WebApp.ViewModels
 @model SearchVM<PictureVM>
 @{
@@ -25,12 +26,12 @@
         justify-content: center;">
         @foreach (var picture in Model.Items ?? new List<PictureVM>())
         {
-            //TODO put loading on images
-            <div>
-                <a class="card" style="height: 250px; width: 200px; text-decoration: none; color: black;"
-                   href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
-                    <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name"
-                         style="max-width: 200px; max-height: 200px;"/>
+            <a id="@picture.Guid" class="card placeholder-glow" style="height: 250px; width: 200px; text-decoration: none; color: black;"
+               href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
+                <div class="card-img-top placeholder"
+                     style="width: 200px; height: 200px;">
+                </div>
+                <div class="card-body">
                     <div class="card-body">
                         <h5 class="card-title">
                             @picture.Name
@@ -38,8 +39,22 @@
                         <p class="card-text">@picture.Description</p>
 
                     </div>
-                </a>
-            </div>
+                </div>
+            </a>
+
+            //TODO put loading on images
+            @* <a class="card" style="height: 250px; width: 200px; text-decoration: none; color: black;" *@
+            @*    href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })"> *@
+            @*     <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name" *@
+            @*          style="max-width: 200px; max-height: 200px;"/> *@
+            @*     <div class="card-body"> *@
+            @*         <h5 class="card-title"> *@
+            @*             @picture.Name *@
+            @*         </h5> *@
+            @*         <p class="card-text">@picture.Description</p> *@
+            @* *@
+            @*     </div> *@
+            @* </a> *@
         }
     </div>
     <hr/>
@@ -77,3 +92,22 @@
         </ul>
     </div>
 </div>
+<script>
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+            let url = "@Url.Action("Data", "Pictures")";
+            url += `?guid=${card.id}`;
+        fetch(url)
+            .then(response => 
+            response.blob()
+            )
+            .then(blob => {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(blob);
+                img.style = 'max-width: 200px; max-height: 200px;';
+                card.querySelectorAll('.placeholder').forEach(placeholder => placeholder.className = 'card-img-top');
+                card.querySelector('.card-img-top').appendChild(img);
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
