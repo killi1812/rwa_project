@@ -1,21 +1,56 @@
+@using WebApp.ViewModels
 @model List<WebApp.ViewModels.PictureVM>
 @{
     var username = Context.User.Identity?.Name;
+    ViewData["Title"] = $"{username} Uploads";
 }
 <div>
     <h1>Your Uploads</h1>
     <hr/>
-    <ul>
-        @foreach (var picture in Model)
+    <div style="
+        display: flex;
+        overflow-wrap: normal;
+        gap: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;">
+        @foreach (var picture in Model ?? new List<PictureVM>())
         {
-            <li>
-                <div>
-                    <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name" style="max-width: 200px; max-height: 200px;"/>
-                    <a href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
-                        @picture.Name
-                    </a>
+            <a id="@picture.Guid" class="card placeholder-glow"
+               style="height: 250px; width: 200px; text-decoration: none; color: black;"
+               href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
+                <div class="card-img-top placeholder"
+                     style="width: 200px; height: 200px;
+overflow: hidden;">
                 </div>
-            </li>
+                <div class="card-body">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @picture.Name
+                        </h5>
+                        <p class="card-text">@picture.Description</p>
+
+                    </div>
+                </div>
+            </a>
         }
-    </ul>
+    </div>
 </div>
+<script>
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        let url = "@Url.Action("Data", "Pictures")";
+        url += `?guid=${card.id}`;
+        fetch(url)
+            .then(response =>
+                response.blob()
+            )
+            .then(blob => {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(blob);
+                img.style = 'max-width: 200px; max-height: 200px;';
+                card.querySelectorAll('.placeholder').forEach(placeholder => placeholder.className = 'card-img-top');
+                card.querySelector('.card-img-top').appendChild(img);
+            })
+            .catch( () => {});
+    });
+</script>

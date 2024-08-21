@@ -2,8 +2,8 @@
 @using WebApp.ViewModels
 @model SearchVM<PictureVM>
 @{
-    ViewData["Title"] = "Search Results";
-    ViewData["query"] = Model.Query;
+ViewData["Title"] = "Search Results";
+ViewData["query"] = Model.Query;
 }
 <h1>
     Search Results
@@ -26,35 +26,36 @@
         justify-content: center;">
         @foreach (var picture in Model.Items ?? new List<PictureVM>())
         {
-            <a id="@picture.Guid" class="card placeholder-glow" style="height: 250px; width: 200px; text-decoration: none; color: black;"
-               href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
-                <div class="card-img-top placeholder"
-                     style="width: 200px; height: 200px;">
-                </div>
+        <a id="@picture.Guid" class="card placeholder-glow"
+           style=" overflow: hidden;height: 250px; width: 200px; text-decoration: none; color: black;"
+           href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })">
+            <div class="card-img-top placeholder"
+                 style="width: 200px; height: 200px;">
+            </div>
+            <div class="card-body">
                 <div class="card-body">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            @picture.Name
-                        </h5>
-                        <p class="card-text">@picture.Description</p>
+                    <h5 class="card-title">
+                        @picture.Name
+                    </h5>
+                    <p class="card-text">@picture.Description</p>
 
-                    </div>
                 </div>
-            </a>
+            </div>
+        </a>
 
-            //TODO put loading on images
-            @* <a class="card" style="height: 250px; width: 200px; text-decoration: none; color: black;" *@
-            @*    href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })"> *@
-            @*     <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name" *@
-            @*          style="max-width: 200px; max-height: 200px;"/> *@
-            @*     <div class="card-body"> *@
-            @*         <h5 class="card-title"> *@
-            @*             @picture.Name *@
-            @*         </h5> *@
-            @*         <p class="card-text">@picture.Description</p> *@
-            @* *@
-            @*     </div> *@
-            @* </a> *@
+        //TODO put loading on images
+        @* <a class="card" style="height: 250px; width: 200px; text-decoration: none; color: black;" *@
+        @*    href="@Url.Action("Details", "Pictures", new { guid = picture.Guid })"> *@
+        @*     <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name" *@
+        @*          style="max-width: 200px; max-height: 200px;"/> *@
+        @*     <div class="card-body"> *@
+        @*         <h5 class="card-title"> *@
+        @*             @picture.Name *@
+        @*         </h5> *@
+        @*         <p class="card-text">@picture.Description</p> *@
+        @* *@
+        @*     </div> *@
+        @* </a> *@
         }
     </div>
     <hr/>
@@ -69,19 +70,19 @@
             </li>
             @for (int i = Model.FromPage; i <= Model.ToPage; i++)
             {
-                var linkText = i.ToString();
-                var linkClass = "page-item";
-                if (i == Model.Page)
-                {
-                    linkClass = "page-item active";
-                }
+            var linkText = i.ToString();
+            var linkClass = "page-item";
+            if (i == Model.Page)
+            {
+            linkClass = "page-item active";
+            }
 
-                <li class="@linkClass">
-                    <a class="page-link"
-                       href="@Url.Action("Search", "Pictures", new { page = i, pageSize = Model.Size, query = Model.Query })">
-                        @linkText
-                    </a>
-                </li>
+            <li class="@linkClass">
+                <a class="page-link"
+                   href="@Url.Action("Search", "Pictures", new { page = i, pageSize = Model.Size, query = Model.Query })">
+                    @linkText
+                </a>
+            </li>
             }
             <li class="page-item">
                 <a class="page-link"
@@ -95,11 +96,11 @@
 <script>
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
-            let url = "@Url.Action("Data", "Pictures")";
-            url += `?guid=${card.id}`;
+        let url = "@Url.Action("Data", "Pictures")";
+        url += `?guid=${card.id}`;
         fetch(url)
-            .then(response => 
-            response.blob()
+            .then(response =>
+                response.blob()
             )
             .then(blob => {
                 const img = document.createElement('img');
