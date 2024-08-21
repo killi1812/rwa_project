@@ -4,6 +4,7 @@
     var picture = Model;
 }
 <div class="pic-details">
+    @* TODO dodaj loading spinner for img  *@
     <img class="img-big" src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name"/>
     <h1
         style="text-align: center">
