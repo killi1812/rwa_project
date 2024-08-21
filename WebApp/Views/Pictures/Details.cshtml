@@ -3,21 +3,78 @@
     ViewData["Title"] = "Details";
     var picture = Model;
 }
-<div>
-    <img src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name"/>
-    <h1>@picture.Name</h1>
-    @foreach (var tag in picture.Tags)
-    {
-        <a href="@Url.Action("Search", "Pictures", new { query = $"Tag={tag}" })">@tag</a>
-    }
-    <p>@picture.Description</p>
-    <p>Photographer: <a href="@Url.Action("Search", "Pictures", new { query = $"Photographer={picture.Photographer}" })">@picture.Photographer</a></p>
-    <p>Uploaded by: <a href="@Url.Action("UserUploads", "User", new { guid = picture.UserGuid })">@picture.Username</a></p>
-    <a class="btn btn-outline-primary" href="@Url.Action("Download", "Pictures", new { guid = picture.Guid })">Download</a>
+<div class="pic-details">
+    <img class="img-big" src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name"/>
+    <h1
+        style="text-align: center">
+        @picture.Name
+    </h1>
+    <div class="tag-container">
+        @foreach (var tag in picture.Tags)
+        {
+            <a href="@Url.Action("Search", "Pictures", new { query = $"Tag={tag}" })">@tag</a>
+        }
+    </div>
+    <hr/>
+    <div class="shadow p-3 mb-5 rounded">
+        <div class="desc-body">
+
+            <p>
+                @picture.Description
+            </p>
+        </div>
+
+        <div class="desc-footer">
+            <p>
+                Photographer:
+                <a
+                    href="@Url.Action("Search", "Pictures", new { query = $"Photographer={picture.Photographer}" })">
+                    @picture.Photographer
+                </a>
+            </p>
+            <p>
+                Uploaded by: <a href="@Url.Action("UserUploads", "User", new { guid = picture.UserGuid })">@picture.Username</a>
+            </p>
+
+        </div>
+    </div>
+    <a class="btn btn-outline-primary"
+       href="@Url.Action("Download", "Pictures", new { guid = picture.Guid })">
+        Download
+    </a>
     <p>Downloads count: @picture.DownloadsCount</p>
+
+
     <p>Downloads:</p>
-    @foreach (var download in picture.Downloads)
-    {
-        <p>@download</p>
-    }
+    <div id="downloadsContainer" class="shadow p-3 mb-5 rounded">
+        @foreach (var download in picture.Downloads)
+        {
+            <p>@download</p>
+        }
+    </div>
 </div>
+<script>
+        const downloadsContainer = document.getElementById('downloadsContainer');
+        let page = 1;
+        const pageSize = 10; // Adjust as needed
+
+        downloadsContainer.addEventListener('scroll', function() {
+            if (downloadsContainer.scrollTop + downloadsContainer.clientHeight >= downloadsContainer.scrollHeight) {
+                loadMoreDownloads();
+            }
+        });
+
+        function loadMoreDownloads() {
+            fetch(`@Url.Action("LoadMoreDownloads", "Pictures", new { guid = picture.Guid })&page=${page}&pageSize=${pageSize}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(download => {
+                        const p = document.createElement('p');
+                        p.textContent = download;
+                        downloadsContainer.appendChild(p);
+                    });
+                    page++;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+</script>

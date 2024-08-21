@@ -23,6 +23,7 @@ public interface IPictureServices
     Task<List<Picture>> SearchPictures(string query, FilterType filter = FilterType.All);
     Task<List<Tag>> GetTopTags(int n = 10);
     Task<List<string>> GetTopPhotographers(int n = 10);
+    Task<List<string>> GetDownloads(Guid guid, int page, int pageSize);
 }
 
 public class PictureServices : IPictureServices
@@ -116,7 +117,7 @@ public class PictureServices : IPictureServices
             throw new NotFoundException("Picture not found");
 
         var tags = newPictureDto.Tags.Split('\n');
-        
+
         await _tagService.AddTagsToPicture(pic.Id, tags);
         return pic;
     }
@@ -237,6 +238,18 @@ public class PictureServices : IPictureServices
             .Select(g => g.Key)
             .ToListAsync();
         return p;
+    }
+
+    public async Task<List<string>> GetDownloads(Guid guid, int page, int pageSize)
+    {
+        var d = await _context.Downloads.OrderByDescending(d => d.Date)
+            .Where(d => d.Picture.Guid == guid)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Include(d => d.User)
+            .Select(x => $"{x.User.Username} downloaded {x.Date:yyyy-MM-dd HH:mm}")
+            .ToListAsync();
+        return d;
     }
 
     public async Task DeletePicture(Guid guid)

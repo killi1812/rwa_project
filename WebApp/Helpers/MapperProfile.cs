@@ -25,7 +25,7 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.DownloadsCount, opt => opt.MapFrom(src => src.Downloads.Count))
             .ForMember(dest => dest.Downloads,
                 opt => opt.MapFrom(src =>
-                    src.Downloads.OrderByDescending(d => d.Date)
+                    src.Downloads.OrderByDescending(d => d.Date).Take(10)
                         .Select(x => $"{x.User.Username} downloaded {x.Date:yyyy-MM-dd HH:mm}").ToList()));
         CreateMap<User, UserVM>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))

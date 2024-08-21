@@ -127,4 +127,11 @@ public class PicturesController : Controller
 
         return RedirectToAction(nameof(Details), new { guid = picture.Guid });
     }
+
+    [HttpGet]
+    public async Task<IActionResult> LoadMoreDownloads(string guid, int page, int pageSize)
+    {
+        var downloads = await _pictureServices.GetDownloads(Guid.Parse(guid), page, pageSize);
+        return Ok(downloads);
+    }
 }

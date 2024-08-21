@@ -40,6 +40,7 @@ overflow: hidden;">
     cards.forEach(card => {
         let url = "@Url.Action("Data", "Pictures")";
         url += `?guid=${card.id}`;
+        //TODO mby throws and error
         fetch(url)
             .then(response =>
                 response.blob()
@@ -51,6 +52,5 @@ overflow: hidden;">
                 card.querySelectorAll('.placeholder').forEach(placeholder => placeholder.className = 'card-img-top');
                 card.querySelector('.card-img-top').appendChild(img);
             })
-            .catch( () => {});
     });
 </script>
