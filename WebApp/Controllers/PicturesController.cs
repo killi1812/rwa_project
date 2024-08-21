@@ -1,6 +1,9 @@
 using AutoMapper;
+using Data.Dto;
+using Data.Helpers;
 using Data.Models;
 using Data.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
 using WebApp.Models;
@@ -98,7 +101,6 @@ public class PicturesController : Controller
         var rez = await _pictureServices.DownloadPicture(Guid.Parse(guid), Guid.Parse(user));
 
         return File(rez.Data, "image/jpeg", $"{rez.pic.Name}.jpeg");
-        // return RedirectToAction(nameof(Details), new { guid });
     }
 
     [HttpGet]
@@ -106,5 +108,23 @@ public class PicturesController : Controller
     {
         var data = await _pictureServices.GetPictureData(Guid.Parse(guid));
         return File(data, "image/jpeg");
+    }
+
+    [Authorize]
+    public async Task<IActionResult> Upload()
+    {
+        return View();
+    }
+
+    [Authorize]
+    public async Task<IActionResult> UploadPicture(NewPictureDto pic)
+    {
+        var guid = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value;
+        if (guid == null)
+            return RedirectToAction("Login", "Auth");
+
+        var picture = await _pictureServices.CreatePicture(pic, Guid.Parse(guid));
+
+        return RedirectToAction(nameof(Details), new { guid = picture.Guid });
     }
 }

@@ -23,9 +23,6 @@ public class PictureVM
     [ValidateNever]
     public string Photographer { get; set; }
 
-    //TODO check if this can be used for idsplaing a picture
-    public string? Url { get; set; }
-
     [Display(Name = "Tags")]
     [ValidateNever]
     public List<string> Tags { get; set; }

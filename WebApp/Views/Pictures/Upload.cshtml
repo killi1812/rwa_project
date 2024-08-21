@@ -1,0 +1,62 @@
+@model Data.Dto.NewPictureDto 
+
+@{
+    ViewData["Title"] = "Upload Picture";
+}
+
+<div>
+    <h1>Upload Picture</h1>
+    <form id="UploadPictureForm" asp-action="UploadPicture" asp-controller="Pictures" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" type="text"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="Photographer" class="control-label"></label>
+            <input asp-for="Photographer" class="form-control" type="text"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <textarea asp-for="Description" class="form-control" type="Text"></textarea>
+        </div>
+        <div tags class="form-group">
+            <label asp-for="Tags" class="control-label"></label>
+            <textarea asp-for="Tags" class="form-control" type="Text" placeholder="new Line for each tag"></textarea>
+        </div>
+        <div class="form-group">
+            <label asp-for="Data" class="control-label"></label>
+            <input asp-for="Data" class="form-control" type="file"></input>
+        </div>
+        <button class="btn btn-success" type="submit">Upload</button>
+    </form>
+</div>
+@* <script> *@
+@*      *@
+@*     const form = document.querySelector('#UploadPictureForm'); *@
+@*     form.addEventListener('submit', async (e) => { *@
+@*         e.preventDefault(); *@
+@*         const formData = new FormData(form); *@
+@*         debugger *@
+@*         const tagsTextarea = document.querySelector('textarea[name="Tags"]'); *@
+@*         const tagsArray = tagsTextarea.value.split('\n').map(tag => tag.trim()).filter(tag => tag.length > 0); *@
+@*         for (let i = 0; i < tagsArray.length; i++) { *@
+@* *@
+@*             formData.set('Tags', tagsArray[i]); *@
+@*         } *@
+@* *@
+@*         // Log the form data for debugging *@
+@*         for (let [key, value] of formData.entries()) { *@
+@*             console.log(`${key}: ${value}`); *@
+@*         } *@
+@* *@
+@*         // Submit the form manually *@
+@*         const res = await fetch(form.action, { *@
+@*             method: form.method, *@
+@*             body: formData, *@
+@*             headers: { *@
+@*                 'Accept': 'application/json' *@
+@*             } *@
+@*         }); *@
+@*         console.log(res); *@
+@*     }); *@
+@* </script> *@

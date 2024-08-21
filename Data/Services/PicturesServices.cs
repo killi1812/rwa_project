@@ -115,7 +115,9 @@ public class PictureServices : IPictureServices
         if (pic == null)
             throw new NotFoundException("Picture not found");
 
-        await _tagService.AddTagsToPicture(pic.Id, newPictureDto.Tags);
+        var tags = newPictureDto.Tags.Split('\n');
+        
+        await _tagService.AddTagsToPicture(pic.Id, tags);
         return pic;
     }
 

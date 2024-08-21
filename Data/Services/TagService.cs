@@ -49,7 +49,7 @@ public class TagService : ITagService
 
         foreach (var tag in tags)
         {
-            newTags.Add(new Tag { Name = tag });
+            newTags.Add(new Tag { Name = tag.Trim() });
             logs.Add($"Created a new tag: {tag}");
         }
 
