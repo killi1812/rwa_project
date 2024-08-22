@@ -84,17 +84,26 @@
     cards.forEach(card => {
         let url = "@Url.Action("Data", "Pictures")";
         url += `?guid=${card.id}`;
-        fetch(url)
-            .then(response =>
-                response.blob()
-            )
-            .then(blob => {
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(blob);
-                img.style = 'max-width: 200px; max-height: 200px;';
-                card.querySelectorAll('.placeholder').forEach(placeholder => placeholder.className = 'card-img-top');
-                card.querySelector('.card-img-top').appendChild(img);
-            })
-            .catch(error => console.error('Error:', error));
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.open('GET', url, true);
+        xhttp.responseType = 'blob';
+    
+        xhttp.onload = function() {
+        if (xhttp.status === 200) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(xhttp.response);
+            img.style = 'max-width: 200px; max-height: 200px;';
+            card.querySelectorAll('.placeholder').forEach(placeholder => placeholder.className = 'card-img-top');
+            card.querySelector('.card-img-top').appendChild(img);
+        } 
+        else {
+            console.error('Error:', xhttp.statusText);
+        }
+    };
+        xhttp.onerror = function() {
+        };
+        xhttp.send();
     });
+    
 </script>
