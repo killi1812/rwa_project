@@ -23,12 +23,15 @@ public class AuthController : Controller
 
     public async Task<IActionResult> LoginAction(string username, string password)
     {
+        //TODO change func paramethers to LoginVM
         var claims = await _userServices.LoginCookie(username, password);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claims.claimsIdentity), claims.authProperties);
 
         HttpContext.Session.SetString("username", username);
+
+        //TODO redirect to current page 
         return Redirect("/Home/Index");
     }
 
@@ -55,16 +58,15 @@ public class AuthController : Controller
     }
 
 
-    //TODO: This should lead to a page where the user can change their password 
     public IActionResult Account(string guid)
     {
-        var guidP = Guid.Parse(guid);
         return View();
     }
 
     public IActionResult Logout()
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //TODO redirect to current page or home
         return Redirect("/Home/Index");
     }
 
