@@ -5,9 +5,12 @@
 }
 <div class="pic-details">
     @* TODO dodaj loading spinner for img  *@
-    <img class="img-big" src="@Url.Action("Data", "Pictures", new { guid = picture.Guid }) " alt="@picture.Name"/>
-    <h1
-        style="text-align: center">
+    <div id="img-spinner" class="text-center">
+        <div class="spinner-border loading-big" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <h1 class="text-center">
         @picture.Name
     </h1>
     <div class="tag-container">
@@ -19,7 +22,6 @@
     <hr/>
     <div class="shadow p-3 mb-5 rounded">
         <div class="desc-body">
-
             <p>
                 @picture.Description
             </p>
@@ -28,8 +30,7 @@
         <div class="desc-footer">
             <p>
                 Photographer:
-                <a
-                    href="@Url.Action("Search", "Pictures", new { query = $"Photographer={picture.Photographer}" })">
+                <a href="@Url.Action("Search", "Pictures", new { query = $"Photographer={picture.Photographer}" })">
                     @picture.Photographer
                 </a>
             </p>
@@ -39,12 +40,13 @@
 
         </div>
     </div>
-    <a class="btn btn-outline-primary"
-       href="@Url.Action("Download", "Pictures", new { guid = picture.Guid })">
-        Download
-    </a>
-    <p>Downloads count: @picture.DownloadsCount</p>
-
+    <div>
+        <a class="btn btn-primary"
+           href="@Url.Action("Download", "Pictures", new { guid = picture.Guid })">
+            Download
+        </a>
+        <p>Downloads count: @picture.DownloadsCount</p>
+    </div>
 
     <p>Downloads:</p>
     <div id="downloadsContainer" class="shadow p-3 mb-5 rounded">
@@ -57,8 +59,24 @@
 <script>
         const downloadsContainer = document.getElementById('downloadsContainer');
         let page = 1;
-        const pageSize = 10; // Adjust as needed
+        const pageSize = 10; 
 
+function LoadPicture() {
+    fetch(`@Url.Action("Data", "Pictures", new { guid = picture.Guid })`)
+        .then(response =>
+            response.blob()
+        )
+        .then(blob => {
+            const img = document.createElement('img');
+            const imgSpinner = document.getElementById('img-spinner');
+            imgSpinner.replaceWith(img);
+            img.className = 'img-big rounded-1';
+            img.src = URL.createObjectURL(blob);
+            img.alt = '@picture.Name';
+            
+        })
+        .catch(error => console.log('Error:', error));
+}
         downloadsContainer.addEventListener('scroll', function() {
             if (downloadsContainer.scrollTop + downloadsContainer.clientHeight >= downloadsContainer.scrollHeight) {
                 loadMoreDownloads();
@@ -76,6 +94,7 @@
                     });
                     page++;
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => console.log('Error:', error));
         }
+        document.addEventListener('DOMContentLoaded', LoadPicture);
 </script>
