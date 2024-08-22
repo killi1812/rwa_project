@@ -2,6 +2,17 @@
 @{
     ViewData["Title"] = "Details";
     var picture = Model;
+    var user = ViewContext.HttpContext.User;
+    bool isAdmin = false;
+    if (user != null && !string.IsNullOrEmpty(user.Identity.Name))
+        isAdmin = user.Claims.FirstOrDefault(c => c.Type == "IsAdmin")?.Value == "True";
+}
+@if (isAdmin)
+{
+    <div>
+        <a class="btn btn-secondary">Edit</a>
+        <a class="btn btn-danger">Delete</a>
+    </div>
 }
 <div class="pic-details">
     @* TODO dodaj loading spinner for img  *@

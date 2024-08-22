@@ -30,33 +30,3 @@
         <button class="btn btn-success" type="submit">Upload</button>
     </form>
 </div>
-@* <script> *@
-@*      *@
-@*     const form = document.querySelector('#UploadPictureForm'); *@
-@*     form.addEventListener('submit', async (e) => { *@
-@*         e.preventDefault(); *@
-@*         const formData = new FormData(form); *@
-@*         debugger *@
-@*         const tagsTextarea = document.querySelector('textarea[name="Tags"]'); *@
-@*         const tagsArray = tagsTextarea.value.split('\n').map(tag => tag.trim()).filter(tag => tag.length > 0); *@
-@*         for (let i = 0; i < tagsArray.length; i++) { *@
-@* *@
-@*             formData.set('Tags', tagsArray[i]); *@
-@*         } *@
-@* *@
-@*         // Log the form data for debugging *@
-@*         for (let [key, value] of formData.entries()) { *@
-@*             console.log(`${key}: ${value}`); *@
-@*         } *@
-@* *@
-@*         // Submit the form manually *@
-@*         const res = await fetch(form.action, { *@
-@*             method: form.method, *@
-@*             body: formData, *@
-@*             headers: { *@
-@*                 'Accept': 'application/json' *@
-@*             } *@
-@*         }); *@
-@*         console.log(res); *@
-@*     }); *@
-@* </script> *@
