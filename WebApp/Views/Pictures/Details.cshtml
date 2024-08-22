@@ -52,9 +52,9 @@
         </div>
     </div>
     <div>
-        <a class="btn btn-primary"
-           href="@Url.Action("Download", "Pictures", new { guid = picture.Guid })">
+        <a id="DownloadButton" class="btn btn-primary" href="@Url.Action("Download", "Pictures", new { guid = picture.Guid })">
             Download
+            @* TODO add refresh on Download *@
         </a>
         <p>Downloads count: @picture.DownloadsCount</p>
     </div>
@@ -68,44 +68,84 @@
     </div>
 </div>
 <script>
-        const downloadsContainer = document.getElementById('downloadsContainer');
-        let page = 1;
-        const pageSize = 10; 
+    const downloadsContainer = document.getElementById('downloadsContainer');
+    let page = 1;
+    const pageSize = 10;
 
-function LoadPicture() {
-    fetch(`@Url.Action("Data", "Pictures", new { guid = picture.Guid })`)
-        .then(response =>
-            response.blob()
-        )
-        .then(blob => {
-            const img = document.createElement('img');
-            const imgSpinner = document.getElementById('img-spinner');
-            imgSpinner.replaceWith(img);
-            img.className = 'img-big rounded-1';
-            img.src = URL.createObjectURL(blob);
-            img.alt = '@picture.Name';
-            
-        })
-        .catch(error => console.log('Error:', error));
-}
-        downloadsContainer.addEventListener('scroll', function() {
-            if (downloadsContainer.scrollTop + downloadsContainer.clientHeight >= downloadsContainer.scrollHeight) {
-                loadMoreDownloads();
+    function LoadPicture() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open('GET', `@Url.Action("Data", "Pictures", new { guid = picture.Guid })`, true);
+        xhttp.responseType = 'blob';
+        xhttp.onload = function() {
+            if (xhttp.status === 200) {
+                const img = document.createElement('img');
+                const imgSpinner = document.getElementById('img-spinner');
+                imgSpinner.replaceWith(img);
+                img.className = 'img-big rounded-1';
+                img.src = URL.createObjectURL(xhttp.response);
+                img.alt = '@picture.Name';
+            } else {
+                console.log('Error:', xhttp.statusText);
             }
-        });
-
-        function loadMoreDownloads() {
-            fetch(`@Url.Action("LoadMoreDownloads", "Pictures", new { guid = picture.Guid })&page=${page}&pageSize=${pageSize}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(download => {
-                        const p = document.createElement('p');
-                        p.textContent = download;
-                        downloadsContainer.appendChild(p);
-                    });
-                    page++;
-                })
-                .catch(error => console.log('Error:', error));
+        };
+        xhttp.onerror = function() {
+            console.log('Error:', xhttp.statusText);
+        };
+        xhttp.send();
+    }
+    
+    //TODO check why blocking
+    document.getElementById("DownloadButton").addEventListener("click",() =>{
+        const xhttp = new XMLHttpRequest();
+        page = 1
+        xhttp.open('GET', `@Url.Action("LoadMoreDownloads", "Pictures", new { guid = picture.Guid })&page=${page}&pageSize=${pageSize}`, true);
+        xhttp.responseType = 'json';
+        xhttp.onload = function() {
+            if (xhttp.status === 200) {
+            downloadsContainer.clear();
+                xhttp.response.forEach(download => {
+                    const p = document.createElement('p');
+                    p.textContent = download;
+                    downloadsContainer.appendChild(p);
+                });
+            } else {
+                console.log('Error:', xhttp.statusText);
+            }
+        };
+        xhttp.onerror = function() {
+            console.log('Error:', xhttp.statusText);
+        };
+        xhttp.send();
+    }); 
+    
+    downloadsContainer.addEventListener('scroll', function() {
+        if (downloadsContainer.scrollTop + downloadsContainer.clientHeight >= downloadsContainer.scrollHeight) {
+            loadMoreDownloads();
         }
-        document.addEventListener('DOMContentLoaded', LoadPicture);
+    });
+    
+
+    function loadMoreDownloads() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open('GET', `@Url.Action("LoadMoreDownloads", "Pictures", new { guid = picture.Guid })&page=${page}&pageSize=${pageSize}`, true);
+        xhttp.responseType = 'json';
+        xhttp.onload = function() {
+            if (xhttp.status === 200) {
+                xhttp.response.forEach(download => {
+                    const p = document.createElement('p');
+                    p.textContent = download;
+                    downloadsContainer.appendChild(p);
+                });
+                page++;
+            } else {
+                console.log('Error:', xhttp.statusText);
+            }
+        };
+        xhttp.onerror = function() {
+            console.log('Error:', xhttp.statusText);
+        };
+        xhttp.send();
+    }
+
+    document.addEventListener('DOMContentLoaded', LoadPicture);
 </script>
