@@ -4,10 +4,6 @@ services:
     image: "mcr.microsoft.com/mssql/server"
     ports:
       - 1433:1433
-    volumes:
-      - ./init:/docker-entrypoint-initdb.d
-    # TODO script doesn't runn on container startup
     environment:
       SA_PASSWORD: "password123!"
       ACCEPT_EULA: "Y"
-
