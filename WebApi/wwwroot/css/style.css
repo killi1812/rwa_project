@@ -47,3 +47,7 @@ table {
 .varn-medium {
     background: #ffc107;
 }
+
+#spinner {
+    display: none;
+}

@@ -30,7 +30,6 @@ public class ExceptionMiddleware
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         var _loggerService = context.RequestServices.GetService<ILoggerService>();
-        _loggerService.Log(exception.Message);
 
         //More log stuff        
         ExceptionResponse response = null;
@@ -53,6 +52,5 @@ public class ExceptionMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)response.Status;
         await context.Response.WriteAsync(response.ToJson());
-        // await context.Response .WriteAsJsonAsync(response);
     }
 }

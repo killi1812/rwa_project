@@ -4,20 +4,34 @@
     const selectPerPage = document.getElementById('selectPerPage');
 
     async function fetchLogs(token, page, n) {
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'block';
         const response = await fetch(`../api/Logs/Get?page=${page}&n=${n}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
-            },
-            method: 'GET'
+            }, method: 'GET'
         });
+        if (!response.ok) {
+            switch (response.status) {
+                case 401:
+                    alert('Unauthorized');
+                    window.location.href = 'login.html';
+                    break;
+                case 404:
+                    alert('Not found');
+                    break;
+                default:
+                    alert('Something went wrong');
+                    break;
+            }
+        }
         const logs = await response.json();
         displayLogs(logs);
+        spinner.style.display = 'none';
+
     }
 
     function displayLogs(logs) {
-        const spinner = document.getElementById('spinner');
-        spinner.style.display = 'none';
-
         logsTableBody.innerHTML = '';
         logs.items.forEach(log => {
             const row = document.createElement('tr');
@@ -84,7 +98,7 @@
         next.classList.add('page-item');
         next.innerHTML = `<a class="page-link" href="#">Next</a>`;
         next.addEventListener('click', async () => {
-            if (currentPage < logs.totalPages) {
+            if (currentPage < logs.lastPage) {
                 currentPage++;
                 await fetchLogs(localStorage.getItem('jwt'), currentPage, selectPerPage.value);
             }
@@ -106,5 +120,8 @@
         await fetchLogs(localStorage.getItem('jwt'), currentPage, selectPerPage.value);
     });
 
-    await fetchLogs(localStorage.getItem('jwt'), currentPage, selectPerPage.value);
+    const btn = document.getElementById('prev');
+    btn.addEventListener('click', async () => {
+        await fetchLogs(localStorage.getItem('jwt'), currentPage, selectPerPage.value);
+    });
 })();

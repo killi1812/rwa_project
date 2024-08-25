@@ -77,6 +77,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseDefaultFiles("/index.html");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
