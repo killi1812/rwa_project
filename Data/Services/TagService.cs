@@ -29,7 +29,7 @@ public class TagService : ITagService
     {
         var tags = _context.Tags.Where(t => oldTags.Contains(t.Name.ToLower())).ToList();
 
-        //TODO change all to select onaly those that are not in tags
+        //TODO change all to select only those that are not in tags
         var newTags = oldTags
             .Where(t => tags.All(tag => tag.Name.ToLower() != t.ToLower()))
             .Select(t => new Tag { Name = t.ToLower() })

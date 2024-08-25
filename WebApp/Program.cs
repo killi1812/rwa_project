@@ -46,7 +46,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-//TODO add exception middleware
 app.UseAuthorization();
 app.UseSession();
 app.MapControllerRoute(

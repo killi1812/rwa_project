@@ -47,9 +47,8 @@ public class FotografijaController : ControllerBase
     {
         var guid = Request.GetGuid();
         if (guid == null) return BadRequest("guid is null");
-        //TODO return created picture
-        await _pictureServices.CreatePicture(newPictureDto, guid.Value);
-        return Ok();
+        var pic = await _pictureServices.CreatePicture(newPictureDto, guid.Value);
+        return Ok(_mapper.Map<PictureDto>(pic));
     }
 
     [Authorize]
@@ -64,16 +63,14 @@ public class FotografijaController : ControllerBase
     [HttpPut("[action]/{guid}")]
     public async Task<IActionResult> Update([FromRoute] string guid, [FromBody] UpdatePictureDto dto)
     {
-        //TODO return updated picture 
-        await _pictureServices.UpdatePicture(Guid.Parse(guid), dto);
-        return Ok();
+        var pic = await _pictureServices.UpdatePicture(Guid.Parse(guid), dto);
+        return Ok(_mapper.Map<PictureDto>(pic));
     }
 
     [HttpGet("[action]")]
     public async Task<IActionResult> Search([FromQuery] string query, [FromQuery] int page = 1, [FromQuery] int n = 10)
     {
         var pics = await _pictureServices.SearchPictures(query);
-        //TODO return whole mapped object
         var picsPag = new Paginated<PictureDto>(_mapper.Map<List<PictureDto>>(pics), page, n);
         return Ok(picsPag);
     }

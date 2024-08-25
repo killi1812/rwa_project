@@ -14,7 +14,7 @@ public interface IPictureServices
     Task<Picture> GetPicture(Guid guid);
     Task<List<Picture>> GetPicturesFromUser(Guid guid);
     Task DeletePicture(Guid guid);
-    Task UpdatePicture(Guid guid, UpdatePictureDto dto);
+    Task<Picture> UpdatePicture(Guid guid, UpdatePictureDto dto);
     Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid);
     Task<List<Picture>> SearchPictures(string query);
     Task<byte[]> GetPictureData(Guid guid);
@@ -266,7 +266,7 @@ public class PictureServices : IPictureServices
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdatePicture(Guid guid, UpdatePictureDto dto)
+    public async Task<Picture> UpdatePicture(Guid guid, UpdatePictureDto dto)
     {
         var picture = _context.Pictures.FirstOrDefault(p => p.Guid == guid);
         if (picture == null)
@@ -289,5 +289,11 @@ public class PictureServices : IPictureServices
 //        var tags = await GetTags(newPictureDto.Tags);
         _loggerService.Log(sb.ToString(), ThreatLvl.Medium);
         await _context.SaveChangesAsync();
+
+        var pic = _context.Pictures.FirstOrDefault(p => p.Guid == guid);
+        if (pic == null)
+            throw new NotFoundException("Picture not found");
+
+        return pic;
     }
 }

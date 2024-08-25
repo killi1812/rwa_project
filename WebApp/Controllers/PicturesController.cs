@@ -28,7 +28,6 @@ public class PicturesController : Controller
     public async Task<IActionResult> Search(string query, int page = 1, int n = 30)
     {
         if (string.IsNullOrWhiteSpace(query))
-            //TODO redirect to most popular pics  
             return Redirect(nameof(SearchResults));
 
         if (page == 0) page = 1;
@@ -40,7 +39,7 @@ public class PicturesController : Controller
 
         if (picsSession == null || oldQuery != query)
         {
-            var q = parseQuery(query);
+            var q = ParseQuery(query);
             var pics = await _pictureServices.SearchPictures(q.Item1, q.Item2);
             pictures = _mapper.Map<List<PictureVM>>(pics);
             HttpContext.Session.SetString("query", query);
@@ -58,7 +57,7 @@ public class PicturesController : Controller
         return Redirect(nameof(SearchResults));
     }
 
-    private (string, FilterType) parseQuery(string query)
+    private static (string, FilterType) ParseQuery(string query)
     {
         try
         {
@@ -80,6 +79,7 @@ public class PicturesController : Controller
             return View(new SearchVM<PictureVM>());
 
         var pictures = pics.ToString().FromJson<SearchVM<PictureVM>>();
+        //TODO if pic empty return most popular pics 
         return View(pictures);
     }
 
