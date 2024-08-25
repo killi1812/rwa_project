@@ -22,6 +22,15 @@ public class LogsController : ControllerBase
         _mapper = mapper;
     }
 
+    [HttpGet("[action]/{n}")]
+    public async Task<IActionResult> Get([FromRoute] int n = 10)
+    {
+        var logs = await _logServices.GetLogs();
+        var logsDto = _mapper.Map<List<LogDto>>(logs);
+        var paginatedLogs = new Paginated<LogDto>(logsDto, 1, n);
+        return Ok(paginatedLogs);
+    }
+
     [HttpGet("[action]")]
     public async Task<IActionResult> Get([FromQuery] int page = 1, int n = 10)
     {
