@@ -72,7 +72,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.SeedData();
+    await app.SeedData();
 }
 
 app.UseHttpsRedirection();
