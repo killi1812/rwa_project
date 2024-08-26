@@ -96,7 +96,7 @@ public class PicturesController : Controller
     {
         var user = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value;
         if (user == null)
-            return RedirectToAction("Login", "Auth");
+            return RedirectToAction("Login", "Auth", new { returnUrl = $"/Pictures/Details?guid={guid}" });
 
         var rez = await _pictureServices.DownloadPicture(Guid.Parse(guid), Guid.Parse(user));
 
@@ -121,7 +121,7 @@ public class PicturesController : Controller
     {
         var guid = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value;
         if (guid == null)
-            return RedirectToAction("Login", "Auth");
+            return RedirectToAction("Login", "Auth", new { returnUrl = Request.Path });
 
         var picture = await _pictureServices.CreatePicture(pic, Guid.Parse(guid));
 
