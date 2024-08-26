@@ -66,7 +66,7 @@ public class UserController : Controller
     {
         var userGuid = Guid.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value);
         var user = _mapper.Map<User>(userVm);
-        _userServices.EditUser(userGuid, user);
-        return Ok();
+        var userNew = _userServices.EditUser(userGuid, user);
+        return Redirect(nameof(Account));
     }
 }

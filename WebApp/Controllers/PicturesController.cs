@@ -134,4 +134,15 @@ public class PicturesController : Controller
         var downloads = await _pictureServices.GetDownloads(Guid.Parse(guid), page, pageSize);
         return Ok(downloads);
     }
+
+    //TODO implement page and action for edit create EditPictureVM
+    public async Task<IActionResult> Edit(string guid)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IActionResult> EditAction()
+    {
+        throw new NotImplementedException();
+    }
 }
