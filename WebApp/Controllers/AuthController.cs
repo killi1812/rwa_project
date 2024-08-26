@@ -58,16 +58,11 @@ public class AuthController : Controller
     }
 
 
-    public IActionResult Account(string guid)
-    {
-        return View();
-    }
-
-    public IActionResult Logout()
+    public IActionResult Logout(string redirectUrl = "/Home/index")
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         //TODO redirect to current page or home
-        return Redirect("/Home/Index");
+        return Redirect(redirectUrl);
     }
 
     public IActionResult AccessDenied()

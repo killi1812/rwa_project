@@ -66,7 +66,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="Logout">Logout</a>
+                        <a class="nav-link text-dark" href="@Url.Action("Logout", "Auth", new { redirectUrl = Context.Request.Path })">Logout</a>
                     </li>
                 }
                 else
