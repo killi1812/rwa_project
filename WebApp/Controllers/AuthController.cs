@@ -4,6 +4,7 @@ using Data.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
 
@@ -16,23 +17,22 @@ public class AuthController : Controller
         _userServices = userServices;
     }
 
-    public IActionResult Login()
+    public IActionResult Login(string returnUrl = "/Home/Index")
     {
-        return View();
+        return View(new LoginVM { ReturnUrl = returnUrl });
     }
 
-    public async Task<IActionResult> LoginAction(string username, string password)
+    public async Task<IActionResult> LoginAction(LoginVM loginVm)
     {
-        //TODO change func paramethers to LoginVM
-        var claims = await _userServices.LoginCookie(username, password);
+        var claims = await _userServices.LoginCookie(loginVm.Username, loginVm.Password);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claims.claimsIdentity), claims.authProperties);
 
-        HttpContext.Session.SetString("username", username);
+        HttpContext.Session.SetString("username", loginVm.Username);
 
         //TODO redirect to current page 
-        return Redirect("/Home/Index");
+        return Redirect(loginVm.ReturnUrl);
     }
 
     public IActionResult Register()
@@ -58,7 +58,7 @@ public class AuthController : Controller
     }
 
 
-    public IActionResult Logout(string redirectUrl = "/Home/index")
+    public IActionResult Logout(string redirectUrl = "/Home/Index")
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         //TODO redirect to current page or home
