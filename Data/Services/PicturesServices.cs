@@ -22,6 +22,7 @@ public interface IPictureServices
     Task<List<Tag>> GetTopTags(int n = 10);
     Task<List<string>> GetTopPhotographers(int n = 10);
     Task<List<string>> GetDownloads(Guid guid, int page, int pageSize);
+    Task<List<Picture>> GetMostPopularPictures(int count = 30);
 }
 
 public class PictureServices : IPictureServices
@@ -248,6 +249,18 @@ public class PictureServices : IPictureServices
             .Select(x => $"{x.User.Username} downloaded {x.Date:yyyy-MM-dd HH:mm}")
             .ToListAsync();
         return d;
+    }
+
+    public async Task<List<Picture>> GetMostPopularPictures(int count = 30)
+    {
+        var pics = await _context.Pictures
+            .OrderByDescending(p => p.Downloads.Count())
+            .Take(count)
+            .Include(p => p.User)
+            .Include(p => p.PictureTags)
+            .ThenInclude(pt => pt.Tag)
+            .ToListAsync();
+        return pics;
     }
 
     public async Task DeletePicture(Guid guid)

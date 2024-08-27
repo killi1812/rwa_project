@@ -23,11 +23,6 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
     public async Task<IActionResult> Top10()
     {
         var tags = await _pictureServices.GetTopTags();

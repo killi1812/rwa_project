@@ -16,6 +16,15 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username));
         CreateMap<Paginated<PictureVM>, SearchVM<PictureVM>>()
             .ForMember(dest => dest.Query, opt => opt.Ignore());
+        CreateMap<List<Picture>, SearchVM<PictureVM>>()
+            .ForMember(dest => dest.Query, opt => opt.Ignore())
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src))
+            .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count))
+            .ForMember(dest => dest.Page, opt => opt.MapFrom(src => 1))
+            .ForMember(dest => dest.Size, opt => opt.MapFrom(src => src.Count()))
+            .ForMember(dest => dest.FromPage, opt => opt.MapFrom(src => 1))
+            .ForMember(dest => dest.ToPage, opt => opt.MapFrom(src => 1))
+            .ForMember(dest => dest.LastPage, opt => opt.MapFrom(src => 1));
 
         CreateMap<Picture, PictureDetailsVM>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))

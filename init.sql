@@ -1,8 +1,8 @@
 --TODO mby rename 
 use master
-go 
+go
 drop database rwa
-go 
+go
 CREATE DATABASE rwa;
 GO
 USE rwa;
@@ -13,9 +13,9 @@ CREATE TABLE users
 (
     id       INT IDENTITY (1,1) PRIMARY KEY NOT NULL,
     guid     UNIQUEIDENTIFIER               NOT NULL,
-    username VARCHAR(255)                   NOT NULL,
+    username NVARCHAR(255)                  NOT NULL,
     admin    bit                            NOT NULL,
-    password VARCHAR(255)                   NOT NULL
+    password NVARCHAR(255)                  NOT NULL
 );
 
 -- 1-to-N 
@@ -23,9 +23,9 @@ create table pictures
 (
     id           int identity (1,1) primary key not null,
     guid         UNIQUEIDENTIFIER               NOT NULL,
-    name         varchar(255)                   not null,
-    description  varchar(255)                   not null,
-    photographer varchar(255)                   not null,
+    name         NVARCHAR(255)                  not null,
+    description  NVARCHAR(255)                  not null,
+    photographer NVARCHAR(255)                  not null,
     userId       int                            not null,
     foreign key (userId) references users (id),
 );
@@ -41,7 +41,7 @@ create table tags
 (
     id   int identity (1,1) primary key not null,
     guid UNIQUEIDENTIFIER               NOT NULL,
-    name varchar(255)                   not null
+    name NVARCHAR(255)                  not null
 );
 
 -- M-to-N-bridge
@@ -71,6 +71,6 @@ create table logs
 (
     id      int identity (1,1) primary key not null,
     date    datetime                       not null,
-    message varchar(max)                   not null,
+    message NVARCHAR(max)                  not null,
     Lvl     int                            not null
 );

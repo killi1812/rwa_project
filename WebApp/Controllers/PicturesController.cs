@@ -5,6 +5,7 @@ using Data.Models;
 using Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using NuGet.Protocol;
 using WebApp.Models;
 using WebApp.ViewModels;
@@ -72,14 +73,16 @@ public class PicturesController : Controller
     }
 
     /// Endpoint for displaying search results
-    public IActionResult SearchResults()
+    public async Task<IActionResult> SearchResults()
     {
         var pics = TempData["pictures"];
         if (pics == null)
-            return View(new SearchVM<PictureVM>());
+        {
+            var mostPopular = await _pictureServices.GetMostPopularPictures();
+            return View(_mapper.Map<SearchVM<PictureVM>>(mostPopular));
+        }
 
         var pictures = pics.ToString().FromJson<SearchVM<PictureVM>>();
-        //TODO if pic empty return most popular pics 
         return View(pictures);
     }
 
