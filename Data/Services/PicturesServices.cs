@@ -297,7 +297,7 @@ public class PictureServices : IPictureServices
         }
 
         //TODO Remove old tags and add new tags 
-//        var tags = await GetTags(newPictureDto.Tags);
+        await _tagService.UpdateTags(picture.Id, dto.Tags);
         _loggerService.Log(sb.ToString(), ThreatLvl.Medium);
         await _context.SaveChangesAsync();
 

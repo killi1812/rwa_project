@@ -79,7 +79,25 @@ public class TagService : ITagService
     {
         if (tags.Count == 0) return;
         var existingTags = await _context.Tags.Where(t => tags.Any(tg => tg == t.Name)).ToListAsync();
-        throw new NotImplementedException();
+        var toAdd = tags.Where(t => existingTags.Any(et => et.Name != t)).ToList();
+        var newTags = CreateNewTags(toAdd).Concat(existingTags).ToList();
+        List<PictureTag> pTags = new();
+        foreach (var tag in newTags)
+        {
+            pTags.Add(new PictureTag()
+            {
+                PictureId = pictureID,
+                TagId = tag.Id
+            });
+        }
+        var oldTags = _context.PictureTags.Where(pt => pt.PictureId == pictureID).ToList();
+        
+        lock (tags)
+        {
+            _context.PictureTags.RemoveRange(oldTags);
+            _context.PictureTags.AddRange(pTags);
+            _context.SaveChanges();
+        }
     }
 
     public Task AddTagsToPicture(int pictureID, IList<string> tags)
