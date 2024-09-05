@@ -37,7 +37,8 @@ public class MapperProfile : Profile
                         .Select(x => $"{x.User.Username} downloaded {x.Date:yyyy-MM-dd HH:mm}").ToList()));
         CreateMap<Picture, UpdatePictureVM>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))
-            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.PictureTags.Select(x => x.Tag.Name).ToList()));
+            .ForMember(dest => dest.Tags,
+                opt => opt.MapFrom(src => string.Join("\n", src.PictureTags.Select(x => x.Tag.Name).ToList())));
 
         CreateMap<User, UserVM>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))

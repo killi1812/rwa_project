@@ -19,5 +19,5 @@ public class UpdatePictureVM
 
     [Display(Name = "Tags")]
     [ValidateNever]
-    public List<string> Tags { get; set; }
+    public string Tags { get; set; }
 }
