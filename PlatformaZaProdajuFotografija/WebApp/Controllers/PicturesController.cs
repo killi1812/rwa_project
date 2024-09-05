@@ -12,14 +12,14 @@ namespace WebApp.Controllers;
 public class PicturesController : Controller
 {
     private readonly IPictureServices _pictureServices;
-    private readonly ILoggerService _loggerService;
+    private readonly ITagService _tagService;
     private readonly IMapper _mapper;
 
-    public PicturesController(IPictureServices pictureServices, ILoggerService loggerService, IMapper mapper)
+    public PicturesController(IPictureServices pictureServices, ITagService tagService, IMapper mapper)
     {
         _pictureServices = pictureServices;
-        _loggerService = loggerService;
         _mapper = mapper;
+        _tagService = tagService;
     }
 
     /// Endpoint for searching pictures
@@ -154,5 +154,12 @@ public class PicturesController : Controller
     {
         await _pictureServices.DeletePicture(Guid.Parse(guid));
         return Redirect(nameof(SearchResults));
+    }
+
+    public async Task<IActionResult> Tags()
+    {
+        var tags = await _tagService.GetTags();
+        var tagsVm = _mapper.Map<TagsVM>(tags);
+        return View(tagsVm);
     }
 }

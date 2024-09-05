@@ -10,6 +10,7 @@ public interface ITagService
     public Task UpdateTags(int pictureID, IList<string> tags);
 
     public Task AddTagsToPicture(int pictureID, IList<string> tags);
+    public Task<List<Tag>> GetTags();
 }
 
 public class TagService : ITagService
@@ -23,20 +24,9 @@ public class TagService : ITagService
         _loggerService = loggerService;
     }
 
-    //TODO check if function needed
-    public async Task<List<Tag>> GetTags(List<string> oldTags)
+    public async Task<List<Tag>> GetTags()
     {
-        var tags = _context.Tags.Where(t => oldTags.Contains(t.Name.ToLower())).ToList();
-
-        //TODO change all to select only those that are not in tags
-        var newTags = oldTags
-            .Where(t => tags.All(tag => tag.Name.ToLower() != t.ToLower()))
-            .Select(t => new Tag { Name = t.ToLower() })
-            .ToList();
-
-        await _context.Tags.AddRangeAsync(newTags);
-        await _context.SaveChangesAsync();
-        return tags.Concat(newTags).ToList();
+        return await _context.Tags.ToListAsync();
     }
 
     public List<Tag> CreateNewTags(IList<string> tags)

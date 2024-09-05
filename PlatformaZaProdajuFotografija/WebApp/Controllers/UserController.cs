@@ -69,4 +69,21 @@ public class UserController : Controller
         var userNew = _userServices.EditUser(userGuid, user);
         return Redirect(nameof(Account));
     }
+
+    [Authorize]
+    public async Task<IActionResult> DeleteUser(string password)
+    {
+        var userGuid = Guid.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value);
+        // await _userServices.DeleteUser(userGuid, password);
+        return RedirectToAction("Logout", "Auth");
+    }
+
+    [Authorize]
+    public IActionResult Users()
+    {
+        //TODO check if admin
+        var users = _userServices.GetUsers();
+        var usersVm = _mapper.Map<List<UserVM>>(users);
+        return View(usersVm);
+    }
 }

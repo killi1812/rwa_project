@@ -52,5 +52,8 @@ public class MapperProfile : Profile
                     src.Downloads.OrderByDescending(d => d.Date)
                         .Select(x => $"{x.User.Username} downloaded {x.Date:yyyy-MM-dd HH:mm}").ToList()))
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username));
+
+        CreateMap<List<Tag>, TagsVM>()
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src));
     }
 }
