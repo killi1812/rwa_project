@@ -156,6 +156,6 @@ public class UserServices : IUserServices
 
     public async Task<List<User>> GetUsers()
     {
-        return await _context.Users.ToListAsync();
+        return await _context.Users.Include(u => u.Downloads).ToListAsync();
     }
 }

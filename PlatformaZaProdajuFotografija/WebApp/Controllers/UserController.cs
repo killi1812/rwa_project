@@ -62,27 +62,28 @@ public class UserController : Controller
     }
 
     [Authorize]
-    public IActionResult EditUser(UserVM userVm)
+    public async Task<IActionResult> EditUser(UserVM userVm)
     {
         var userGuid = Guid.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value);
         var user = _mapper.Map<User>(userVm);
-        var userNew = _userServices.EditUser(userGuid, user);
+        await _userServices.EditUser(userGuid, user);
         return Redirect(nameof(Account));
     }
 
     [Authorize]
-    public async Task<IActionResult> DeleteUser(string password)
+    public async Task<IActionResult> DeleteUser(string guid)
     {
+        //TODO implement
         var userGuid = Guid.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value);
         // await _userServices.DeleteUser(userGuid, password);
         return RedirectToAction("Logout", "Auth");
     }
 
     [Authorize]
-    public IActionResult Users()
+    public async Task<IActionResult> Users()
     {
         //TODO check if admin
-        var users = _userServices.GetUsers();
+        var users = await _userServices.GetUsers();
         var usersVm = _mapper.Map<List<UserVM>>(users);
         return View(usersVm);
     }

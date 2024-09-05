@@ -143,6 +143,7 @@ public class PicturesController : Controller
         return View(picVm);
     }
 
+    [Authorize]
     public async Task<IActionResult> EditAction(UpdatePictureVM vm)
     {
         UpdatePictureDto dto = _mapper.Map<UpdatePictureDto>(vm);
@@ -150,16 +151,25 @@ public class PicturesController : Controller
         return RedirectToAction(nameof(Details), new { guid = pic.Guid });
     }
 
+    [Authorize]
     public async Task<IActionResult> Delete(string guid)
     {
+        //TODO implement on delete cascade
         await _pictureServices.DeletePicture(Guid.Parse(guid));
         return Redirect(nameof(SearchResults));
+    }
+
+    [Authorize]
+    public async Task<IActionResult> DeleteTag(string guid)
+    {
+        await _tagService.DeleteTag(Guid.Parse(guid));
+        return Redirect(nameof(Tags));
     }
 
     public async Task<IActionResult> Tags()
     {
         var tags = await _tagService.GetTags();
-        var tagsVm = _mapper.Map<TagsVM>(tags);
+        var tagsVm = _mapper.Map<List<TagVM>>(tags);
         return View(tagsVm);
     }
 }

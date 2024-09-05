@@ -1,3 +1,4 @@
+using Data.Helpers;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ public interface ITagService
 
     public Task AddTagsToPicture(int pictureID, IList<string> tags);
     public Task<List<Tag>> GetTags();
+    public Task DeleteTag(Guid guid);
 }
 
 public class TagService : ITagService
@@ -26,7 +28,15 @@ public class TagService : ITagService
 
     public async Task<List<Tag>> GetTags()
     {
-        return await _context.Tags.ToListAsync();
+        return await _context.Tags.Include(t => t.PictureTags).ToListAsync();
+    }
+
+    public async Task DeleteTag(Guid guid)
+    {
+        var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Guid == guid);
+        if (tag == null) throw new NotFoundException("Tag not found");
+        _context.Remove(tag);
+        await _context.SaveChangesAsync();
     }
 
     public List<Tag> CreateNewTags(IList<string> tags)

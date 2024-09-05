@@ -53,7 +53,7 @@ public class MapperProfile : Profile
                         .Select(x => $"{x.User.Username} downloaded {x.Date:yyyy-MM-dd HH:mm}").ToList()))
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username));
 
-        CreateMap<List<Tag>, TagsVM>()
-            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src));
+        CreateMap<Tag, TagVM>()
+            .ForMember(dest => dest.PicturesCount, opt => opt.MapFrom(src => src.PictureTags.Count));
     }
 }
