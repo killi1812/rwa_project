@@ -113,8 +113,7 @@ public class PictureServices : IPictureServices
         if (pic == null)
             throw new NotFoundException("Picture not found");
 
-        var tags = newPictureDto.Tags.Split('\n');
-
+        var tags = newPictureDto.Tags.Split('\n').Select(t => t.Trim()).ToList();
         await _tagService.AddTagsToPicture(pic.Id, tags);
         return pic;
     }

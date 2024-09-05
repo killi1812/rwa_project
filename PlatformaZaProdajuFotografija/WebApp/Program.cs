@@ -42,6 +42,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
     await app.SeedData();
 }
+//TODO make and add exception middleware
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

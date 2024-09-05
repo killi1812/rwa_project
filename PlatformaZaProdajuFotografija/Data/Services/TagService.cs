@@ -105,6 +105,7 @@ public class TagService : ITagService
         if (tags.Count == 0) return Task.CompletedTask;
         lock (tags)
         {
+            //TODO sometimes it add new tags even if they exist Try checking for newLine or space 
             var existingTags = _context.Tags.Where(t => tags.Contains(t.Name)).ToList();
             List<Tag> newTags = CreateNewTags(tags.Where(t => !existingTags.Any(et => et.Name == t)).ToList());
 
