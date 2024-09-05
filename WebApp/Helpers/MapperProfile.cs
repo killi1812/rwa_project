@@ -1,7 +1,5 @@
 using AutoMapper;
-using Data.Dto;
 using Data.Models;
-using WebApp.Models;
 using WebApp.ViewModels;
 
 namespace WebApp.Helpers;

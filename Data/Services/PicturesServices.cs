@@ -3,8 +3,6 @@ using Data.Dto;
 using Data.Helpers;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using WebApp.Models;
 
 namespace Data.Services;
 

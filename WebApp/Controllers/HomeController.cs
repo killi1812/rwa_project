@@ -2,7 +2,6 @@
 using AutoMapper;
 using Data.Services;
 using Microsoft.AspNetCore.Mvc;
-using WebApp.Models;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;

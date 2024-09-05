@@ -1,13 +1,10 @@
 using AutoMapper;
 using Data.Dto;
-using Data.Helpers;
 using Data.Models;
 using Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using NuGet.Protocol;
-using WebApp.Models;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;

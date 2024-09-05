@@ -1,10 +1,7 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Data.Helpers;
-
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 
 public static class JwtHelpers
 {

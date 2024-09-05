@@ -1,10 +1,9 @@
 using AutoMapper;
 using Data.Dto;
-using Data.Helpers;
+using Data.Models;
 using Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApp.Models;
 
 namespace WebApi.Controllers;
 
