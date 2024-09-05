@@ -141,11 +141,22 @@ public class PicturesController : Controller
     //TODO implement page and action for edit create EditPictureVM
     public async Task<IActionResult> Edit(string guid)
     {
-        throw new NotImplementedException();
+        var pic = await _pictureServices.GetPicture(Guid.Parse(guid));
+        var picVm = _mapper.Map<UpdatePictureVM>(pic);
+        return View(picVm);
     }
 
-    public async Task<IActionResult> EditAction()
+    public async Task<IActionResult> EditAction(UpdatePictureVM vm)
     {
-        throw new NotImplementedException();
+        //TODO check mapping between UpdatePictureVM and UpdatePictureDto, and check what to update
+        UpdatePictureDto dto = _mapper.Map<UpdatePictureDto>(vm);
+        var pic = await _pictureServices.UpdatePicture(Guid.Parse(vm.Guid), dto);
+        return RedirectToAction(nameof(Details), new { guid = pic.Guid });
+    }
+
+    public async Task<IActionResult> Delete(string guid)
+    {
+        await _pictureServices.DeletePicture(Guid.Parse(guid));
+        return Redirect(nameof(SearchResults));
     }
 }

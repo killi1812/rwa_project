@@ -1,0 +1,29 @@
+@model WebApp.ViewModels.UpdatePictureVM
+
+@{
+    ViewData["Title"] = "Edit Picture";
+}
+<div>
+    <h1>Upload Picture</h1>
+    <form id="UploadPictureForm" asp-action="EditAction" asp-controller="Pictures" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" type="text"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="Photographer" class="control-label"></label>
+            <input asp-for="Photographer" class="form-control" type="text"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description" class="control-label"></label>
+            <textarea asp-for="Description" class="form-control" type="Text"></textarea>
+        </div>
+        <div tags class="form-group">
+            <label asp-for="Tags" class="control-label"></label>
+            <textarea asp-for="Tags" class="form-control" type="Text" placeholder="new Line for each tag"></textarea>
+        </div>
+        <div class="form-group">
+        </div>
+        <button class="btn btn-primary mt-5" type="submit">Upload</button>
+    </form>
+</div>

@@ -1,6 +1,7 @@
 @using WebApp.ViewModels
 @model List<WebApp.ViewModels.PictureVM>
 @{
+    //TODO check if they are your uploads or someone else's
     var username = Context.User.Identity?.Name;
     ViewData["Title"] = $"{username} Uploads";
 }

@@ -10,8 +10,8 @@
 @if (isAdmin)
 {
     <div>
-        <a class="btn btn-secondary">Edit</a>
-        <a class="btn btn-danger">Delete</a>
+        <a class="btn btn-secondary" href="@Url.Action("Edit", "Pictures", new { guid = Model.Guid })">Edit</a>
+        <button id="delete" class="btn btn-danger">Delete</button>
     </div>
 }
 <div class="pic-details">
@@ -147,4 +147,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', LoadPicture);
+    
+    const del = document.getElementById("delete");
+    del.addEventListener("click", () => {
+        if (confirm("Are you sure you want to delete this picture?")) {
+            location.href = `@Url.Action("Delete", "Pictures", new { guid = picture.Guid })`}
+       }
+    );
+    
 </script>

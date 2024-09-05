@@ -4,5 +4,18 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div class="main-text-container">
+        <p class="text-container">This is a site for uploading, sharding and downloading pictures</p>
+        <p class="text-container">It is a part of the RWA course at Algebra University</p>
+        <div class="text-container">
+            Browse pictures in the search bar<br/>
+            use [
+            <a class="link-btn">Tags</a>,
+            <a class="link-btn">Name</a>,
+            <a class="link-btn">Photographer</a>
+            ]={searchQuery} if you want more filtered results <br/>
+        </div>
+        <p class="text-container">Register to download pictures you like</p>
+        <div class="text-container">Look at the top tags <a class="btn-sm btn-primary text-decoration-none" href="@Url.Action("Top10", "Home")">Go -></a></div>
+    </div>
 </div>
