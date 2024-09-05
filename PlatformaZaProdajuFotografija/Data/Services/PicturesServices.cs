@@ -296,7 +296,6 @@ public class PictureServices : IPictureServices
 
         _context.Pictures.Update(picture);
         await _context.SaveChangesAsync();
-        //TODO Remove old tags and add new tags 
         await _tagService.UpdateTags(picture.Id, dto.Tags);
         _loggerService.Log(sb.ToString(), ThreatLvl.Medium);
 

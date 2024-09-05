@@ -135,7 +135,6 @@ public class PicturesController : Controller
         return Ok(downloads);
     }
 
-    //TODO implement page and action for edit create EditPictureVM
     public async Task<IActionResult> Edit(string guid)
     {
         var pic = await _pictureServices.GetPicture(Guid.Parse(guid));
