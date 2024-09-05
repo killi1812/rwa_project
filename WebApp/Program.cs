@@ -1,13 +1,14 @@
 using Data.Helpers;
 using Data.Models;
 using Data.Services;
+using Microsoft.EntityFrameworkCore;
 using WebApp.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<RwaContext>();
+builder.Services.AddDbContext<RwaContext>(o => { o.UseSqlServer(builder.Configuration["ConnectionStrings:db"]); });
 builder.Services.AddAutoMapper(typeof(MapperProfile));
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

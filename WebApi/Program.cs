@@ -4,13 +4,14 @@ using Data.Models;
 using Data.Services;
 using WebApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddDbContext<RwaContext>();
+builder.Services.AddDbContext<RwaContext>(o =>
+    o.UseSqlServer(builder.Configuration["ConnectionStrings:db"]));
 builder.Services.AddAutoMapper(typeof(MapperProfile));
 
 string keyb = builder.Configuration["key"];
