@@ -1,4 +1,3 @@
-using AutoMapper.Internal;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -90,8 +89,9 @@ public class TagService : ITagService
                 TagId = tag.Id
             });
         }
+
         var oldTags = _context.PictureTags.Where(pt => pt.PictureId == pictureID).ToList();
-        
+
         lock (tags)
         {
             _context.PictureTags.RemoveRange(oldTags);
