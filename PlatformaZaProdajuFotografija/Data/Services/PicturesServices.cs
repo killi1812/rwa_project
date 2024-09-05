@@ -294,10 +294,11 @@ public class PictureServices : IPictureServices
             sb.Append($"Photographer changed to {dto.Photographer}");
         }
 
+        _context.Pictures.Update(picture);
+        await _context.SaveChangesAsync();
         //TODO Remove old tags and add new tags 
         await _tagService.UpdateTags(picture.Id, dto.Tags);
         _loggerService.Log(sb.ToString(), ThreatLvl.Medium);
-        await _context.SaveChangesAsync();
 
         var pic = _context.Pictures.FirstOrDefault(p => p.Guid == guid);
         if (pic == null)

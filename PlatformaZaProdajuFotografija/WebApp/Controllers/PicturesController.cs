@@ -145,7 +145,6 @@ public class PicturesController : Controller
 
     public async Task<IActionResult> EditAction(UpdatePictureVM vm)
     {
-        //TODO check mapping between UpdatePictureVM and UpdatePictureDto, and check what to update
         UpdatePictureDto dto = _mapper.Map<UpdatePictureDto>(vm);
         var pic = await _pictureServices.UpdatePicture(Guid.Parse(vm.Guid), dto);
         return RedirectToAction(nameof(Details), new { guid = pic.Guid });

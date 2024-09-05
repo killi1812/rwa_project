@@ -78,8 +78,8 @@ public class TagService : ITagService
     {
         if (tags.Count == 0) return;
         var existingTags = await _context.Tags.Where(t => tags.Any(tg => tg == t.Name)).ToListAsync();
-        var toAdd = tags.Where(t => existingTags.Any(et => et.Name != t)).ToList();
-        var newTags = CreateNewTags(toAdd).Concat(existingTags).ToList();
+        var toAdd = tags.Where(t => !existingTags.Any(et => et.Name == t)).ToList();
+        var newTags = CreateNewTags(toAdd).Concat(existingTags).DistinctBy(t => t.Name).ToList();
         List<PictureTag> pTags = new();
         foreach (var tag in newTags)
         {

@@ -1,4 +1,5 @@
 using AutoMapper;
+using Data.Dto;
 using Data.Models;
 using WebApp.ViewModels;
 
@@ -39,7 +40,11 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))
             .ForMember(dest => dest.Tags,
                 opt => opt.MapFrom(src => string.Join("\n", src.PictureTags.Select(x => x.Tag.Name).ToList())));
-
+        CreateMap<UpdatePictureVM, UpdatePictureDto>()
+            .ForMember(dest => dest.Guid, opt => opt.Ignore())
+            .ForMember(dest => dest.Tags,
+                opt => opt.MapFrom(src =>
+                    new List<string>(src.Tags.Split('\n', StringSplitOptions.TrimEntries))));
         CreateMap<User, UserVM>()
             .ForMember(dest => dest.Guid, opt => opt.MapFrom(src => src.Guid.ToString()))
             .ForMember(dest => dest.Downloads,

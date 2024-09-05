@@ -6,6 +6,7 @@
 <div>
     <h1>Upload Picture</h1>
     <form id="UploadPictureForm" asp-action="EditAction" asp-controller="Pictures" method="post" enctype="multipart/form-data">
+        <input asp-for="Guid" class="visually-hidden form-control" type="text"/>
         <div class="form-group">
             <label asp-for="Name" class="control-label"></label>
             <input asp-for="Name" class="form-control" type="text"/>
