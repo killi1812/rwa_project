@@ -25,7 +25,8 @@ public interface IUserServices
     public Task ChangePassword(Guid userGuid, string oldPassword, string newPassword);
     public Task<User> GetUser(Guid parse);
     public Task EditUser(Guid userGuid, User user);
-    public Task<List<User>> GetUsers();
+    public Task<List<User>> GetUsers(Guid userGuid);
+    Task DeleteUser(Guid adminGuid, Guid guid);
 }
 
 public class UserServices : IUserServices
@@ -154,15 +155,37 @@ public class UserServices : IUserServices
             throw new NotFoundException($"User with guid {userGuid} not found");
         if (!userGuid.Equals(user.Guid))
             throw new UnauthorizedException("You can only edit your own user");
-        if(user.Username == null)
+        if (user.Username == null)
             throw new Exception("Username cannot be null");
         userOld.Username = user.Username;
         _context.Users.Update(userOld);
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<User>> GetUsers()
+    public async Task<List<User>> GetUsers(Guid userGuid)
     {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == userGuid);
+        if (user == null)
+            throw new NotFoundException($"User with guid {userGuid} not found");
+        if (!user.Admin)
+            throw new UnauthorizedException("You need to be admin to see all users");
         return await _context.Users.Include(u => u.Downloads).ToListAsync();
+    }
+
+    public Task DeleteUser(Guid adminGuid, Guid guid)
+    {
+        var admin = _context.Users.FirstOrDefault(u => u.Guid == adminGuid);
+        if (admin == null)
+            throw new NotFoundException($"User with guid {adminGuid} not found");
+        if (!admin.Admin)
+            throw new UnauthorizedException("You need to be admin to delete users");
+        var user = _context.Users.FirstOrDefault(u => u.Guid == guid);
+        if (user == null)
+            throw new NotFoundException($"User with guid {guid} not found");
+        if (user.Guid == adminGuid)
+            throw new Exception("You cannot delete yourself");
+
+        _context.Users.Remove(user);
+        return _context.SaveChangesAsync();
     }
 }

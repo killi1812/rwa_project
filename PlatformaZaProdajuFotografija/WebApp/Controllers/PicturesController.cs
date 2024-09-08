@@ -153,7 +153,6 @@ public class PicturesController : Controller
     [Authorize]
     public async Task<IActionResult> Delete(string guid)
     {
-        //TODO implement on delete cascade
         await _pictureServices.DeletePicture(Guid.Parse(guid));
         return Redirect(nameof(SearchResults));
     }

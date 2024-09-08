@@ -61,7 +61,7 @@ public class UserController : Controller
         await _userServices.ChangePassword(userGuid, oldPassword, newPassword);
         return Ok();
     }
-    
+
     [Authorize]
     public async Task<IActionResult> EditUser([FromBody] UserDto dto)
     {
@@ -75,17 +75,16 @@ public class UserController : Controller
     [Authorize]
     public async Task<IActionResult> DeleteUser(string guid)
     {
-        //TODO implement
         var userGuid = Guid.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value);
-        // await _userServices.DeleteUser(userGuid, password);
-        return RedirectToAction("Logout", "Auth");
+        await _userServices.DeleteUser(userGuid, Guid.Parse(guid));
+        return RedirectToAction("Users", "User");
     }
 
     [Authorize]
     public async Task<IActionResult> Users()
     {
-        //TODO check if admin
-        var users = await _userServices.GetUsers();
+        var userGuid = Guid.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value);
+        var users = await _userServices.GetUsers(userGuid);
         var usersVm = _mapper.Map<List<UserVM>>(users);
         return View(usersVm);
     }

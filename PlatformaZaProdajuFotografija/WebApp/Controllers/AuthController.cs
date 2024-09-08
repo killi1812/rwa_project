@@ -34,7 +34,6 @@ public class AuthController : Controller
 
         HttpContext.Session.SetString("username", loginVm.Username);
 
-        //TODO redirect to current page 
         return Redirect(loginVm.ReturnUrl);
     }
 
@@ -59,7 +58,6 @@ public class AuthController : Controller
     public IActionResult Logout(string redirectUrl = "/Home/Index")
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        //TODO redirect to current page or home
         return Redirect(redirectUrl);
     }
 
