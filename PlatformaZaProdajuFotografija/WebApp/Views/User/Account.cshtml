@@ -1,14 +1,15 @@
-@using Data.Dto
 @model WebApp.ViewModels.UserVM
 @{
     ViewData["Title"] = "Your Account";
     bool isEditing = false;
 }
 <div>
-    <h1>Your Account</h1>
-    <button id="editButton" class="btn btn-secondary" onclick="toggleEdit()">Edit</button>
+    <div class="d-flex flex-row justify-content-between">
+        <h1>Your Account</h1>
+        <button id="editButton" class="btn btn-secondary" onclick="toggleEdit()">Edit</button>
+    </div>
     <form id="accountForm" style="display: none;">
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label asp-for="Username" class="control-label">Username</label>
             <input asp-for="Username" class="form-control" id="usernameInput"/>
         </div>
@@ -21,7 +22,7 @@
             <input class="form-control" name="oldPassword" id="oldPassword"/>
 
         </div>
-        <div class="form-group">
+        <div class="form-group mb-3">
             <label class="control-label" for="newPassword">New Password</label>
             <input class="form-control" name="newPassword" id="newPassword"/>
         </div>
@@ -38,6 +39,8 @@
 
 <script>
     function toggleEdit() {
+        const btn = document.getElementById('editButton');
+        btn.innerText = btn.innerText === 'Edit' ? 'Cancel' : 'Edit'; 
         const forms = document.querySelectorAll('form');
         const details = document.getElementById('accountDetails');
         forms.forEach(form => {
@@ -62,7 +65,8 @@
         })
         .then(res => res.json())
         .then(data => {
-       //TODO show alert that password is changed 
+        alert('Password changed');
+        
         });
     });
     
@@ -92,10 +96,11 @@
             contentType: 'application/json',
             data: JSON.stringify(userDto),
             success: function(data) {
-                console.log(data);
+                document.getElementById('usernameDisplay').innerText = data.username;
+                toggleEdit();
             },
             error: function(data) {
-                console.log(data);
+                alert('Password changed');
             }
         });
     });
