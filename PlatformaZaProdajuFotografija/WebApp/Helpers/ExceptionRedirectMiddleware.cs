@@ -1,16 +1,14 @@
 using System.Net;
-using Data.Dto;
+using Data.Helpers;
 using Data.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace Data.Helpers;
+namespace WebApp.Helpers;
 
-public class ExceptionMiddleware
+public class ExceptionRedirectMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public ExceptionMiddleware(RequestDelegate next)
+    public ExceptionRedirectMiddleware(RequestDelegate next)
     {
         _next = next;
     }
@@ -31,28 +29,27 @@ public class ExceptionMiddleware
     {
         var _loggerService = context.RequestServices.GetService<ILoggerService>();
 
-        //More log stuff        
-        ExceptionResponse response = null;
+        string redirectUrl = "/Error";
+        var message = Uri.EscapeDataString(exception.Message);
         switch (exception)
         {
             case NotFoundException:
-                response = new ExceptionResponse(HttpStatusCode.NotFound, exception.Message);
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 _loggerService.Log(exception.Message, ThreatLvl.Medium);
+                redirectUrl = $"/Error/Error404?message={message}";
                 break;
             case UnauthorizedException:
-                response = new ExceptionResponse(HttpStatusCode.Unauthorized, exception.Message);
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 _loggerService.Log(exception.Message, ThreatLvl.High);
+                redirectUrl = $"/Error/Error401?message={Uri.EscapeDataString(exception.Message)}";
                 break;
             default:
-                response = new ExceptionResponse(HttpStatusCode.InternalServerError, exception.Message);
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 _loggerService.Log(exception.Message, ThreatLvl.High);
+                redirectUrl = $"/Error/Error500?message={Uri.EscapeDataString(exception.Message)}";
                 break;
         }
 
-        //TODO change so it moves to prod error page
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)response.Status;
-        // context.Response.Redirect();
-        await context.Response.WriteAsync(response.ToJson());
+        context.Response.Redirect(redirectUrl);
     }
 }

@@ -49,7 +49,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthorization();
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionRedirectMiddleware>();
 app.UseSession();
 app.MapControllerRoute(
     name: "default",
