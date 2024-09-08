@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.ViewModels;
 
-public class LoginVM
+public class RegisterVM
 {
     [Display(Name = "Username")]
     [Required(ErrorMessage = "Username is required")]
@@ -12,5 +12,7 @@ public class LoginVM
     [Required(ErrorMessage = "Password is required")]
     public string Password { get; set; }
 
-    public string ReturnUrl { get; set; } = "/Home/Index";
+    [Display(Name = "Repeat Password")]
+    [Required(ErrorMessage = "Password is required")]
+    public string Password2 { get; set; }
 }

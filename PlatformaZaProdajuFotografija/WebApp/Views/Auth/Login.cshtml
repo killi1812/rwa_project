@@ -4,13 +4,20 @@
 }
 <form asp-action="LoginAction" asp-controller="Auth">
     <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input type="text" class="form-control" id="username" name="username">
+        <label asp-for="Username" class="form-label">Username</label>
+        <input asp-for="Username" type="text" class="form-control">
+        <span asp-validation-for="Username" class="text-danger"></span>
     </div>
     <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" name="password">
+        <label asp-for="Password" class="form-label">Password</label>
+        <input asp-for="Password" type="password" class="form-control">
+        <span asp-validation-for="Password" class="text-danger"></span>
     </div>
     <input type="hidden" asp-for="ReturnUrl"/>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">Login</button>
 </form>
+
+
+@section Scripts {
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

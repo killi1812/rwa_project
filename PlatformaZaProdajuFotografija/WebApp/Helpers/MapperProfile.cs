@@ -54,6 +54,9 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username));
         CreateMap<UserDto, User>();
 
+        CreateMap<RegisterVM, NewUserDto>()
+            .ForMember(dest => dest.Admin, opt => opt.MapFrom(src => false));
+
 
         CreateMap<Tag, TagVM>()
             .ForMember(dest => dest.PicturesCount, opt => opt.MapFrom(src => src.PictureTags.Count));

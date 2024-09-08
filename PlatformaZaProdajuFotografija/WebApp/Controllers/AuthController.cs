@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AutoMapper;
 using Data.Dto;
 using Data.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -11,10 +12,12 @@ namespace WebApp.Controllers;
 public class AuthController : Controller
 {
     private readonly IUserServices _userServices;
+    private readonly IMapper _mapper;
 
-    public AuthController(IUserServices userServices)
+    public AuthController(IUserServices userServices, IMapper mapper)
     {
         _userServices = userServices;
+        _mapper = mapper;
     }
 
     public IActionResult Login(string returnUrl = "/Home/Index")
@@ -40,20 +43,15 @@ public class AuthController : Controller
         return View();
     }
 
-    public async Task<IActionResult> RegisterAction(string username, string password, string password2)
+    public async Task<IActionResult> RegisterAction(RegisterVM vm)
     {
-        if (password != password2)
+        if (vm.Password != vm.Password2)
         {
             ViewData["error"] = "Passwords do not match";
             return Redirect(nameof(Register));
         }
 
-        await _userServices.CreateUser(new NewUserDto
-        {
-            Username = username,
-            Password = password,
-            Admin = false,
-        });
+        await _userServices.CreateUser(_mapper.Map<NewUserDto>(vm));
         return Redirect(nameof(Login));
     }
 
