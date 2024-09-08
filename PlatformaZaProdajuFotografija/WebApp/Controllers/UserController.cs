@@ -1,4 +1,5 @@
 using AutoMapper;
+using Data.Dto;
 using Data.Models;
 using Data.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -60,14 +61,15 @@ public class UserController : Controller
         await _userServices.ChangePassword(userGuid, oldPassword, newPassword);
         return Ok();
     }
-
+    
     [Authorize]
-    public async Task<IActionResult> EditUser(UserVM userVm)
+    public async Task<IActionResult> EditUser([FromBody] UserDto dto)
     {
         var userGuid = Guid.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserGuid")?.Value);
-        var user = _mapper.Map<User>(userVm);
+        var user = _mapper.Map<User>(dto);
         await _userServices.EditUser(userGuid, user);
-        return Redirect(nameof(Account));
+        var newUser = _mapper.Map<UserVM>(await _userServices.GetUser(userGuid));
+        return Ok(newUser);
     }
 
     [Authorize]

@@ -150,8 +150,15 @@ public class UserServices : IUserServices
     public async Task EditUser(Guid userGuid, User user)
     {
         var userOld = await _context.Users.FirstOrDefaultAsync(u => u.Guid == userGuid);
-        if (user == null)
+        if (userOld == null)
             throw new NotFoundException($"User with guid {userGuid} not found");
+        if (!userGuid.Equals(user.Guid))
+            throw new UnauthorizedException("You can only edit your own user");
+        if(user.Username == null)
+            throw new Exception("Username cannot be null");
+        userOld.Username = user.Username;
+        _context.Users.Update(userOld);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<User>> GetUsers()

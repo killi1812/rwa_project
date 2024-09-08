@@ -1,3 +1,4 @@
+@using Data.Dto
 @model WebApp.ViewModels.UserVM
 @{
     ViewData["Title"] = "Your Account";
@@ -6,9 +7,9 @@
 <div>
     <h1>Your Account</h1>
     <button id="editButton" class="btn btn-secondary" onclick="toggleEdit()">Edit</button>
-    <form id="accountForm" asp-action="EditUser" asp-controller="User" style="display: none;">
+    <form id="accountForm" style="display: none;">
         <div class="form-group">
-            <label asp-for="Username" class="control-label"></label>
+            <label asp-for="Username" class="control-label">Username</label>
             <input asp-for="Username" class="form-control" id="usernameInput"/>
         </div>
         <button class="btn btn-success" type="submit">Save</button>
@@ -61,7 +62,41 @@
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data);
+       //TODO show alert that password is changed 
+        });
+    });
+    
+    const getAdminTF = () =>{
+        if ("@Model.Admin" === "True")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+     
+    const accountForm = document.getElementById('accountForm');
+    accountForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('usernameInput').value;
+        const userDto = {
+            Guid: "@Model.Guid",
+            Username: username,
+            Admin: getAdminTF()
+        };
+        $.ajax({
+            url: '/User/EditUser',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(userDto),
+            success: function(data) {
+                console.log(data);
+            },
+            error: function(data) {
+                console.log(data);
+            }
         });
     });
 </script>
