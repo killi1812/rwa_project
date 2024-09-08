@@ -80,6 +80,9 @@ public class PictureServices : IPictureServices
 
     public async Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid)
     {
+        var exist = await _context.Pictures.AnyAsync(p => p.Name == newPictureDto.Name);
+        if (exist)
+            throw new Exception($"Picture with name {newPictureDto.Name} already exists");
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == guid);
         if (user == null)
             throw new NotFoundException("User not found");
