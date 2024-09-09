@@ -20,7 +20,7 @@ public interface IPictureServices
     Task<List<Tag>> GetTopTags(int n = 10);
     Task<List<string>> GetTopPhotographers(int n = 10);
     Task<List<string>> GetDownloads(Guid guid, int page, int pageSize);
-    Task<List<Picture>> GetMostPopularPictures(int count = 30);
+    Task<List<Picture>> GetMostPopularPictures(int count = 10);
 }
 
 public class PictureServices : IPictureServices
@@ -80,7 +80,9 @@ public class PictureServices : IPictureServices
 
     public async Task<Picture> CreatePicture(NewPictureDto newPictureDto, Guid guid)
     {
-        var exist = await _context.Pictures.AnyAsync(p => p.Name == newPictureDto.Name);
+        var name = $"{newPictureDto.Name}.{newPictureDto.Data.ContentType.Split("/")[1]}";
+        var exist = await _context.Pictures.AnyAsync(p =>
+            p.Name == name);
         if (exist)
             throw new Exception($"Picture with name {newPictureDto.Name} already exists");
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == guid);
@@ -92,7 +94,7 @@ public class PictureServices : IPictureServices
 
         var picture = new Picture
         {
-            Name = $"{newPictureDto.Name}.{newPictureDto.Data.ContentType.Split("/")[1]}",
+            Name = name,
             Photographer = newPictureDto.Photographer,
             UserId = user.Id,
             Description = newPictureDto.Description
@@ -251,7 +253,7 @@ public class PictureServices : IPictureServices
         return d;
     }
 
-    public async Task<List<Picture>> GetMostPopularPictures(int count = 30)
+    public async Task<List<Picture>> GetMostPopularPictures(int count = 10)
     {
         var pics = await _context.Pictures
             .OrderByDescending(p => p.Downloads.Count())

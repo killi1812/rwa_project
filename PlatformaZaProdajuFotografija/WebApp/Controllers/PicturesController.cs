@@ -23,7 +23,7 @@ public class PicturesController : Controller
     }
 
     /// Endpoint for searching pictures
-    public async Task<IActionResult> Search(string query, int page = 1, int n = 30)
+    public async Task<IActionResult> Search(string query, int page = 1, int n = 10)
     {
         if (string.IsNullOrWhiteSpace(query))
             return Redirect(nameof(SearchResults));
